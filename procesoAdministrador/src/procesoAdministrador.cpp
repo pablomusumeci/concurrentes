@@ -14,7 +14,8 @@ int main() {
 
 	if (procId == 0) {
 		sleep(5);
-		// Llamo aljefe de estacion
+		// Llamo al jefe de estacion
+		// Esto veamos como estandarizarlo...
 		execl("../procesoJefeEstacion/Debug/procesoJefeEstacion", "");
 
 	} else {
