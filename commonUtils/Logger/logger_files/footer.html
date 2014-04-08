@@ -1,0 +1,50 @@
+</tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript" src="./logger_files/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="./logger_files/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./logger_files/js/jquery.tablesorter.min.js"></script> 
+    
+    <script>  
+
+    $(document).ready(function() 
+    { 
+        $("#tabla").tablesorter(); 
+    }); 
+
+    $( "#fatalButton" ).click(function() {
+      $( "#filas tr.danger" ).toggle();
+      $( "#fatalButton" ).toggleClass("active");
+    });
+
+    $( "#infoButton" ).click(function() {
+      $( "#filas tr.info" ).toggle();
+      $( "#infoButton" ).toggleClass("active");
+    });
+
+    $( "#warningButton" ).click(function() {
+      $( "#filas tr.warning" ).toggle();
+      $( "#warningButton" ).toggleClass("active");
+    });
+
+    $( "#debugButton" ).click(function() {
+      $( "#filas tr.debug" ).toggle();
+      $( "#debugButton" ).toggleClass("active");
+    });
+
+    $( "#errorButton" ).click(function() {
+      $( "#filas tr.error" ).toggle();
+      $( "#errorButton" ).toggleClass("active");
+    });
+    </script>
+
+  
+
+</body></html>

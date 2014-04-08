@@ -1,0 +1,56 @@
+    <!DOCTYPE html>
+<!-- saved from url=(0044)http://getbootstrap.com/examples/dashboard/# -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Logger</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="./logger_files/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  <style type="text/css"></style><style id="holderjs-style" type="text/css"></style></head>
+
+  <body style="">
+
+  <div class="page-header container">
+    <div class="row">
+      <div class="col-md-4 text-center">
+        <h1><span class="glyphicon glyphicon-eye-open"></span> Logger</h1>
+      </div>
+      <div class="col-md-6 col-md-offset-6">
+        <div class="btn-group btn-group-lg">
+          <button id="fatalButton" type="button" class="btn btn-lg btn-danger active">Fatal</button>
+          <button id="warningButton" type="button" class="btn btn-lg btn-warning active">Warning</button>
+          <button id="infoButton"type="button" class="btn btn-lg btn-info active">Info</button>
+          <button id="errorButton"type="button" class="btn btn-lg btn-danger active">Error</button>
+          <button id="debugButton"type="button" class="btn btn-lg btn-success   active">Debug</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="container-fluid">
+      <div class="col-md-10 col-md-offset-1">
+        <div class="row">
+          <div class="table-responsive">
+            <table id="tabla" class="table table-striped table-hover table-condensed">
+              <thead>
+                <tr>
+                  <th>PID</th>
+                  <th>Horario</th>
+                  <th>Tipo</th>
+                  <th>Tag</th>
+                  <th>Descripción</th>
+                </tr>
+              </thead>
+              <tbody id="filas">

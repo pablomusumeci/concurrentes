@@ -23,10 +23,10 @@ using namespace std;
 
 #endif /*LOG_LEVEL*/
 
-class logger {
+class Logger {
 
 private:
-	logger();
+	Logger();
 	static ofstream archivoLog;
 	// nivel de log con el que logeamos. Por defecto, DEBUG.
 	static int nivelDeLog;
