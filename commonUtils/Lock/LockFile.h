@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <iostream>
-#include "../Logger/Logger.h"
 
 class LockFile {
 

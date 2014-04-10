@@ -11,8 +11,7 @@ LockFile :: LockFile ( const std::string nombre ) {
 	this->fl.l_len = 0;
 	this->fd = open ( this->nombre.c_str(),O_CREAT|O_WRONLY,0777 );
 	if (this->fd == -1){
-		string msj = "No se pudo abrir el archivo para armar el lock";
-		Logger::instance().error(TAG, msj);
+		std::string msj = "No se pudo abrir el archivo para armar el lock";
 		throw(msj);
 	}
 }
@@ -29,8 +28,8 @@ int LockFile :: liberarLock () {
 
 LockFile :: ~LockFile () {
 	if (close ( this->fd ) == -1){
-		string msj = "Error al cerrar el Lock";
-		Logger::instance().error(TAG, msj);
+		std::string msj = "Error al cerrar el Lock";
+		throw (msj);
 	}
 }
 

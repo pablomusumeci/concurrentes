@@ -3,14 +3,20 @@
 #include <unistd.h>
 #include <wait.h>
 #include "MemoriaCompartida.h"
+#include <Logger/Logger.h>
+#include <utils.h>
 
 using namespace std;
+
+#define TAG "Proceso Administrador"
 
 int calcularRandom();
 
 int main() {
 
 	pid_t procId = fork();
+
+	Logger log;
 
 	if (procId == 0) {
 		sleep(5);
@@ -27,8 +33,8 @@ int main() {
 
 			// escribe un dato para el hijo
 			int random = calcularRandom();
-			cout << "Padre: escribo el numero " << random
-					<< " en la memoria compartida" << endl;
+			log.info(TAG, "Padre: escribo el numero " + intToString(random)
+							+ " en la memoria compartida");
 			memoria.escribir(random);
 
 			// espera a que termine el hijo
@@ -36,10 +42,10 @@ int main() {
 			// libera la memoria
 			memoria.liberar();
 		} catch (std::string &e) {
-			cout << "Padre: error en memoria compartida: " << endl;
+			log.error(TAG, "Padre: error en memoria compartida." );
 		}
 
-		cout << "Padre: fin del proceso" << endl;
+		log.info(TAG, "Padre: fin del proceso");
 		exit(0);
 
 	}

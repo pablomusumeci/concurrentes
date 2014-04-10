@@ -23,23 +23,28 @@ using namespace std;
 
 #endif /*LOG_LEVEL*/
 
+#define APPLICATION_PROPERTIES "application.properties"
+
 class Logger {
 
 private:
-	Logger();
-	static ofstream archivoLog;
+	ofstream archivoLog;
 	// nivel de log con el que logeamos. Por defecto, DEBUG.
-	static int nivelDeLog;
-	static void log(const string& tag, const string& msg, int level);
+	int nivelDeLog;
+	void log(const string& tag, const string& msg, int level);
+	std::string logFileName;
 
+	void safeLog(const string& tag, const string& msg, int level);
 public:
-	static void fatal(const string&, const string&);
-	static void error(const string&, const string&);
-	static void warn(const string&, const string&);
-	static void debug(const string&, const string&);
-	static void info(const string&, const string&);
+	Logger();
+	~Logger();
+	void fatal(const string&, const string&);
+	void error(const string&, const string&);
+	void warn(const string&, const string&);
+	void debug(const string&, const string&);
+	void info(const string&, const string&);
 
-	static void setLogLevel(int);
+	void setLogLevel(int);
 };
 
 #endif /* LOGGER_H_ */

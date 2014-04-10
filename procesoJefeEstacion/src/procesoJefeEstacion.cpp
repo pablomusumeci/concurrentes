@@ -5,21 +5,27 @@ using namespace std;
 #include <stdlib.h>
 #include <wait.h>
 #include "MemoriaCompartida.h"
+#include <Logger/Logger.h>
+#include <utils.h>
+
+#define TAG "Proceso Jefe de Estacion"
 
 int calcularRandom();
 
 int main() {
+
+	Logger log;
 
 	std::string archivo = "datos.txt";
 	try {
 		MemoriaCompartida<int> buffer(archivo, 'A');
 
 		int resultado = buffer.leer();
-		std::cout << "Hijo: leo el numero " << resultado
-				<< " de la memoria compartida" << std::endl;
-		std::cout << "Hijo: fin del proceso" << std::endl;
+		log.info(TAG, "Hijo: leo el numero " + intToString(resultado)
+				+ " de la memoria compartida");
+		log.info(TAG, "Hijo: fin del proceso" );
 	} catch (std::string& mensaje) {
-		std::cerr << mensaje << std::endl;
+		log.error(TAG,  mensaje);
 	}
 
 	exit(0);

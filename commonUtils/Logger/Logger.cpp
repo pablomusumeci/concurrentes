@@ -2,62 +2,58 @@
 #include <sstream>
 #include <sys/types.h>
 #include <unistd.h>
-ofstream Logger::archivoLog;
+#include "../Lock/LockFile.h"
 
-int Logger::nivelDeLog = NIVEL_GLOBAL;
-
-void Logger::warn(const string& tag, const string& msg){
-	if ((Logger::nivelDeLog & LOG_WARN) == 0)
+void Logger::warn(const string& tag, const string& msg) {
+	if ((nivelDeLog & LOG_WARN) == 0)
 		return;
 
-	log(tag, msg, LOG_WARN);
+	safeLog(tag, msg, LOG_WARN);
 }
 
 void Logger::error(const string& tag, const string& msg) {
-	if ((Logger::nivelDeLog & LOG_ERROR) == 0)
+	if ((nivelDeLog & LOG_ERROR) == 0)
 		return;
 
-	log(tag, msg, LOG_ERROR);
+	safeLog(tag, msg, LOG_ERROR);
 }
 
 void Logger::debug(const string& tag, const string& msg) {
-	if (Logger::nivelDeLog != LOG_DEBUG)
+	if (nivelDeLog != LOG_DEBUG)
 		return;
-	log(tag, msg, LOG_DEBUG);
+	safeLog(tag, msg, LOG_DEBUG);
 }
 
 void Logger::info(const string& tag, const string& msg) {
-	if ((Logger::nivelDeLog & LOG_INFO) == 0)
+	if ((nivelDeLog & LOG_INFO) == 0)
 		return;
 
-	log(tag, msg, LOG_INFO);
+	safeLog(tag, msg, LOG_INFO);
 }
 
-
 void Logger::fatal(const string& tag, const string& msg) {
-	if ((Logger::nivelDeLog & LOG_FATAL) == 0)
+	if ((nivelDeLog & LOG_FATAL) == 0)
 		return;
-	log(tag, msg, LOG_FATAL);
+	safeLog(tag, msg, LOG_FATAL);
+}
+
+void Logger::safeLog(const string& tag, const string& msg, int level) {
+	try {
+		LockFile lockFile(logFileName);
+		lockFile.tomarLock();
+		log(tag, msg, level);
+		lockFile.liberarLock();
+	} catch (std::string &msj) {
+		printf("%s\n", "Error fatal en la apertura del archivo de log.");
+		throw msj;
+	}
 }
 
 void Logger::log(const string& tag, const string& msg, int level) {
-	static int i = 0;
+
 	struct tm *p_local_t;
 	time_t t = time(NULL);
 	p_local_t = localtime(&t);
-	stringstream out;
-
-	out << 	"[" << p_local_t->tm_mday << "-" << 1 + p_local_t->tm_mon
-			<< "-" << 1900 + p_local_t->tm_year << " "
-			<< p_local_t->tm_hour << ":" << p_local_t->tm_min
-			<< ":" << p_local_t->tm_sec << "]" ;
-
-	string timeStamp = "log.txt";
-	if (i == 0){
-		Logger::archivoLog.open( timeStamp.c_str() );
-		archivoLog << "PID\t\t" << "  Fecha y  hora\t\t" << " Tipo\t\t" << "Lugar del mensaje\t\t\t" << "Mensaje" << endl ;
-		i++;
-	}
 
 	string sNivel("INFO");
 	switch (level) {
@@ -87,16 +83,33 @@ void Logger::log(const string& tag, const string& msg, int level) {
 		sep = "\t\t";
 	else if (tag.size() >= 8)
 		sep = "\t\t\t";
-	else sep = "\t\t\t\t";
+	else
+		sep = "\t\t\t\t";
 
 	//FORMATO: d-m-yyyy HH:mm:ss objeto mensaje
-	archivoLog << getpid() << "\t" << p_local_t->tm_mday << "-" << 1 + p_local_t->tm_mon
-			<< "-" << 1900 + p_local_t->tm_year << " "
-			<< p_local_t->tm_hour << ":" << p_local_t->tm_min
-			<< ":" << p_local_t->tm_sec << "\t" << sNivel << "\t" << tag << sep << msg
+	archivoLog << getpid() << "\t" << p_local_t->tm_mday << "-"
+			<< 1 + p_local_t->tm_mon << "-" << 1900 + p_local_t->tm_year << " "
+			<< p_local_t->tm_hour << ":" << p_local_t->tm_min << ":"
+			<< p_local_t->tm_sec << "\t" << sNivel << "\t" << tag << sep << msg
 			<< endl;
 }
 
-void Logger::setLogLevel(int nivelLog){
-	Logger::nivelDeLog = nivelLog;
+void Logger::setLogLevel(int nivelLog) {
+	nivelDeLog = nivelLog;
+}
+
+Logger::Logger() {
+	nivelDeLog = NIVEL_GLOBAL;
+	ifstream properties(APPLICATION_PROPERTIES);
+	if (! properties.is_open()) {
+		std::string msj = "No se pudo abrir el archivo de properties";
+		throw(msj);
+	}
+	properties >> logFileName;
+	properties.close();
+	archivoLog.open(logFileName.c_str(),  std::ios::app);
+}
+
+Logger::~Logger() {
+	archivoLog.close();
 }
