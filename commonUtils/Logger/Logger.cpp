@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "../Lock/LockFile.h"
+#include "PropertiesNotFoundException.h"
 
 void Logger::warn(const string& tag, const string& msg) {
 	if ((nivelDeLog & LOG_WARN) == 0)
@@ -45,7 +46,7 @@ void Logger::safeLog(const string& tag, const string& msg, int level) {
 		lockFile.liberarLock();
 	} catch (std::string &msj) {
 		printf("%s\n", "Error fatal en la apertura del archivo de log.");
-		throw msj;
+		throw new PropertiesNotFoundException(msj);
 	}
 }
 
@@ -103,7 +104,7 @@ Logger::Logger() {
 	ifstream properties(APPLICATION_PROPERTIES);
 	if (! properties.is_open()) {
 		std::string msj = "No se pudo abrir el archivo de properties";
-		throw(msj);
+		throw(new PropertiesNotFoundException(msj));
 	}
 	properties >> logFileName;
 	properties.close();
