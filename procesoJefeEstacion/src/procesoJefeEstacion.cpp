@@ -6,6 +6,7 @@ using namespace std;
 #include <wait.h>
 #include <MemoriaCompartida.h>
 #include <Logger/Logger.h>
+#include <Properties/Properties.h>
 #include <utils.h>
 
 #define TAG "Jefe de Estacion"
@@ -16,7 +17,8 @@ int main() {
 
 	Logger log;
 	log.info(TAG, "Comienzo del proceso jefe de estacion");
-	std::string archivo = "datos.txt";
+	Properties properties;
+	std::string archivo = properties.getProperty("process.commonFile");
 	try {
 		MemoriaCompartida<int> *buffer = new MemoriaCompartida<int>(archivo, 'A');
 

@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "../Lock/LockFile.h"
+#include "../Properties/Properties.h"
 #include "PropertiesNotFoundException.h"
 
 void Logger::warn(const string& tag, const string& msg) {
@@ -101,13 +102,8 @@ void Logger::setLogLevel(int nivelLog) {
 
 Logger::Logger() {
 	nivelDeLog = NIVEL_GLOBAL;
-	ifstream properties(APPLICATION_PROPERTIES);
-	if (! properties.is_open()) {
-		std::string msj = "No se pudo abrir el archivo de properties";
-		throw(new PropertiesNotFoundException(msj));
-	}
-	properties >> logFileName;
-	properties.close();
+	Properties properties;
+	logFileName = properties.getProperty("file.log.location");
 	archivoLog.open(logFileName.c_str(),  std::ios::app);
 }
 

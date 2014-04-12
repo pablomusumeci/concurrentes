@@ -6,6 +6,7 @@
  */
 
 #include <Logger/Logger.h>
+#include <Properties/Properties.h>
 #include <MemoriaCompartida.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -20,7 +21,8 @@ int main(int argc, char* argv[]) {
 
 	// Crear un segmento de memoria compartida:
 
-	std::string archivo = "datos.txt";
+	Properties properties;
+	std::string archivo = properties.getProperty("process.commonFile");
 	MemoriaCompartida<int> memoria;
 	try {
 		memoria.crear(archivo, 'A');
@@ -41,8 +43,9 @@ int main(int argc, char* argv[]) {
 	// Usar la clase Proceso para forkear el proceso jefe de estacion
 	pid_t procIdJefeEstacion = fork();
 	if (procIdJefeEstacion == 0) {
-		execl("../procesoJefeEstacion/Debug/procesoJefeEstacion",
-				"procesoJefeEstacion", NULL);
+		std::string procesoJefeEstacion = properties.getProperty(
+				"process.jefeEstacion");
+		execl(procesoJefeEstacion.c_str(), "procesoJefeEstacion", NULL);
 	} else {
 		// Usar la clase Proceso para forkear los procesos empleados
 
