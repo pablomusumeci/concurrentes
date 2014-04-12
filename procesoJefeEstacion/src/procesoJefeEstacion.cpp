@@ -7,7 +7,7 @@ using namespace std;
 #include <MemoriaCompartida.h>
 #include <Logger/Logger.h>
 #include <Properties/Properties.h>
-#include <utils.h>
+#include <StringUtils.h>
 
 #define TAG "Jefe de Estacion"
 
@@ -23,7 +23,7 @@ int main() {
 		MemoriaCompartida<int> *buffer = new MemoriaCompartida<int>(archivo, 'A');
 
 		int resultado = buffer->leer();
-		log.info(TAG, "Leo el numero " + intToString(resultado)
+		log.info(TAG, "Leo el numero " + StringUtils::intToString(resultado)
 				+ " de la memoria compartida");
 		log.info(TAG, "Fin del proceso" );
 	} catch (std::string& mensaje) {

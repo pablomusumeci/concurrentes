@@ -4,7 +4,7 @@
 #include <wait.h>
 #include "MemoriaCompartida.h"
 #include <Logger/Logger.h>
-#include <utils.h>
+#include <StringUtils.h>
 
 using namespace std;
 
