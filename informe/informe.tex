@@ -44,21 +44,21 @@
 	\texttt{./procesoPrincipal -e 5 -s 7}
 \end{itemize}
 
-\section{Procesos}
+\section{Procesos del proyecto}
 
 	\subsection{Generador de Autos}
 		
 		Este proceso es el encargado de crear los autos que llegan a la estación. Para
-		dicho propósito, genera cada una cierta cantidad de tiempo aleatorio, un nuevo
-		auto (compuesto por un ID y una cantidad de dinero que va a gastar en al estación).
+		dicho propósito, genera un auto en intervalos de tiempo elegidos de forma aleatoria. 
+		Cada auto está representado por un ID y una cantidad de dinero que va a gastar en la estación.
 
-		El Generador de Autos interactua con el Jefe de Estación, y dicha interacción se puede
-		asemejar al problema \textbf{Producer - Consumer}, debido a que, el Generador produce
+		El Generador de Autos interactúa con el Jefe de Estación, y dicha interacción se puede
+		asemejar al problema \textbf{Producer - Consumer}, debido a que el Generador produce
 		los autos que el Jefe de Estación va a recibir. 
 
 		Al analizar este problema, debemos tener en cuenta que el \textbf{producer} no debería
-		agregar información al buffer que comparte con el consumer, si el mismo se encuentra lleno.
-		En esta situación nosotros optamos por enviar a dormir al proceso generador, por un tiempo
+		agregar información al medio que comparte con el consumer, si el mismo se encuentra lleno.
+		En esta situación optamos por enviar a dormir al proceso generador, por un tiempo
 		aleatorio, y volver a intentar escribir en el buffer cuando se despierte.
 
 	\subsection{Jefe de Estación}
@@ -69,10 +69,18 @@
 		Una vez que logró extraer un automóvil del buffer exitosamente, debe asignarle 
 		un empleado al auto recibido, en caso de que exista algun empleado disponible 
 		en ese mismo instante, caso contrario,deberá redirigir el mismo hacia la salida.
+		
+		Para esto, el proceso explora un array de valores lógicos (booleanos), que representan la disponibilidad de los empleados. La posición del booleano en el array es tambien el ID de empleado. Una vez hallado al empleado, se marca el valor lógico correspondiente como ``Ocupado''. Luego se graban los datos del auto en un pipe compartido con le proceso Empleado.
 
 	\subsection{Empleado}
-
-	\subsection{Empleado}
+	
+	Este proceso representa el accionar de un empleado cuando atiende un auto. El proceso espera un auto por un pipe, cuando lo lee, busca un surtidor libre de forma similar al Jefe de Estacion cunado busca un empleado libre. Una vez tomado el surtidor, procede a atender el auto. En nuestra simulación, atender un auto se traduce en introducir una demora (sleep) antes de grabar el monto cobrado en la caja. Vale aclarar que el sleep mencionado recién es utilizado simplemente para simular la utilización del surtidor, cuya implementacion escapa del ambito de este proyecto, y no es utilizado como mecanismo de coordinación entre ningún par de procesos.
+	
+	Una vez atendido, inmediatamente se descartan los datos del auto (como se describió en las hipótesis). Luego, el empleado busca el control de la caja para grabar lo recaudado. Esta operación es un problema de concurrencia entre todos los procesos empleados, y debe ser coordinada mediante un semáforo binario (es decir, el semaforo está tomado o no, o lo que es lo mismo, el valor utilizado en semctl() al crear el semáforo es igual a 1.
+	
+	\subsection{Administrador}
+	
+	El proceso administrador tiene la facultad de consultar el valor guardado en la caja. Puede hacerlo en cualquier momento, y su consulta sobre la caja esta controlada de la misma forma que el empleado. La diferencia con el empleado es que el Administrador no espera a un auto, sino que puede consultar en cualquier momento.
 
 
 \end{document}
