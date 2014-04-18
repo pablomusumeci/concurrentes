@@ -12,7 +12,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdlib.h>
-
+#include <Modelo/Auto.h>
 #define TAG "Proceso principal"
 
 int main(int argc, char* argv[]) {
