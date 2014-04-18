@@ -24,6 +24,10 @@
 	\item Consideramos que cuando un auto es enviado a la salida por el Jefe de Estación,
 	el mismo sale del sistema de manera instantánea, sin tener que hacer una cola
 	para salir de la estación.
+
+	\item El administrador no tiene prioridad sobre los empleados al momento de consultar
+	el saldo en la caja, y debido a esto, cuando desea hacerlo debe aguardar su turno para
+	trabajar de manera exclusiva con la caja, al igual que cualquier empleado.
 \end{itemize}
 
 \subsection{Casos de uso}
@@ -70,13 +74,13 @@
 		un empleado al auto recibido, en caso de que exista algun empleado disponible 
 		en ese mismo instante, caso contrario,deberá redirigir el mismo hacia la salida.
 		
-		Para esto, el proceso explora un array de valores lógicos (booleanos), que representan la disponibilidad de los empleados. La posición del booleano en el array es tambien el ID de empleado. Una vez hallado al empleado, se marca el valor lógico correspondiente como ``Ocupado''. Luego se graban los datos del auto en un pipe compartido con le proceso Empleado.
+		Para esto, el proceso explora un array de valores lógicos (booleanos), que representan la disponibilidad de los empleados. La posición del booleano en el array es tambien el ID de empleado (no confundir con el PID del proceso empleado). Una vez hallado al empleado, se marca el valor lógico correspondiente como ``Ocupado''. Luego se graban los datos del auto en un pipe compartido con le proceso Empleado.
 
 	\subsection{Empleado}
 	
-	Este proceso representa el accionar de un empleado cuando atiende un auto. El proceso espera un auto por un pipe, cuando lo lee, busca un surtidor libre de forma similar al Jefe de Estacion cunado busca un empleado libre. Una vez tomado el surtidor, procede a atender el auto. En nuestra simulación, atender un auto se traduce en introducir una demora (sleep) antes de grabar el monto cobrado en la caja. Vale aclarar que el sleep mencionado recién es utilizado simplemente para simular la utilización del surtidor, cuya implementacion escapa del ambito de este proyecto, y no es utilizado como mecanismo de coordinación entre ningún par de procesos.
+	Este proceso representa el accionar de un empleado cuando atiende un auto. El proceso espera un auto por un pipe, cuando lo lee, busca un surtidor libre, lo cual se representa por medio de un semáforo que se encarga de llevar la cuenta de cuantos surtidores disponibles hay. Una vez tomado el surtidor, procede a atender el auto. En nuestra simulación, atender un auto se traduce en introducir una demora (sleep) antes de grabar el monto cobrado en la caja. Vale aclarar que el sleep mencionado recién es utilizado simplemente para simular la utilización del surtidor, cuya implementacion escapa del ambito de este proyecto, y no es utilizado como mecanismo de coordinación entre ningún par de procesos.
 	
-	Una vez atendido, inmediatamente se descartan los datos del auto (como se describió en las hipótesis). Luego, el empleado busca el control de la caja para grabar lo recaudado. Esta operación es un problema de concurrencia entre todos los procesos empleados, y debe ser coordinada mediante un semáforo binario (es decir, el semaforo está tomado o no, o lo que es lo mismo, el valor utilizado en semctl() al crear el semáforo es igual a 1.
+	Una vez que termina el tiempo de atención del auto, el empleado busca el control de la caja para grabar lo recaudado. Esta operación es un problema de concurrencia entre todos los procesos empleados, y debe ser coordinada mediante un semáforo binario (es decir, el semáforo está tomado o no.
 	
 	\subsection{Administrador}
 	
@@ -105,6 +109,15 @@
 	\item Empleado - Administrador:
 	
 	\end{itemize}
+
+	\section{Diagrama de estados del proceso Jefe De Estación}
+
+	\begin{figure}
+	\includegraphics[width=1.0\textwidth]{FSM_JDE.png}[h]
+	% https://docs.google.com/drawings/d/1fSqCpKnnYxksGUfpufRSJbsfxkYRRuSEGUDkyJf5Sf0/edit?usp=sharing
+	\caption{FSM del Jefe de Estación}
+	\end{figure}
+
 
 
 \end{document}
