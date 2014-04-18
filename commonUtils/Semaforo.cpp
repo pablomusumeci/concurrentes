@@ -1,56 +1,51 @@
-/*
- * Semaforo.cpp
- *
- *  Created on: 17/04/2014
- *      Author: javier
- */
+# include "Semaforo.h"
 
-#include "Semaforo.h"
-#include<stdlib.h>
-#include<unistd.h>
-#include<sys/ipc.h>
-#include<sys/types.h>
-#include<string.h>
-#include<errno.h>
-
-Semaforo::Semaforo(const std::string& archivo, const char letra) {
-	key = ftok(archivo.c_str(), letra);
-	semid = semget(key, 1, IPC_CREAT);
-
-	if (semid < 0){
-		throw "Error en la creacion del semaforo";
-	}
-
-	wait.sem_num = 0;
-	wait.sem_op = -1;
-	wait.sem_flg = SEM_UNDO;
-
-	signal.sem_num = 0;
-	signal.sem_op = 1;
-	signal.sem_flg = SEM_UNDO;
-}
-
-void Semaforo::setValor(int semval) {
-	semctl(semid, 0, SETVAL, semval);
-}
-
-int Semaforo::getValor() {
-	return semctl(semid, 0, GETVAL);
-}
-
-void Semaforo::tomar() {
-	semop(semid, &wait, 1);
-}
-
-void Semaforo::liberar() {
-	semop(semid, &signal, 1);
-}
-
-void Semaforo::destruir() {
-	semctl(semid, 0, IPC_RMID);
+Semaforo::Semaforo( char * nombre , int valorInicial ) {
+	this->valorInicial = valorInicial ;
+	key_t clave = ftok ( nombre , 'a' ) ;
+	this->id = semget ( clave ,1 ,0666 | IPC_CREAT ) ;
+	this->inicializar () ;
 }
 
 Semaforo::~Semaforo() {
-
 }
 
+int Semaforo::inicializar () {
+	union semnum {
+		int val ;
+		struct semid_ds * buf ;
+		ushort * array ;
+	};
+	semnum init ;
+	init.val = this->valorInicial ;
+	int resultado = semctl ( this->id , 0 , SETVAL , init ) ;
+	return resultado ;
+}
+
+/**
+ * Decrementa en 1 el valor del semaforo
+ */
+int Semaforo::p() {
+	struct sembuf operacion ;
+	operacion.sem_num = 0; // numero de semaforo
+	operacion.sem_op = -1; // restar 1 al s e m a f o r o
+	operacion.sem_flg = SEM_UNDO ;
+	int resultado = semop ( this->id , &operacion ,1 ) ;
+	return resultado ;
+}
+
+/**
+ * Incrementa en uno el valor del semaforo
+ */
+int Semaforo::v() {
+	struct sembuf operacion ;
+	operacion.sem_num = 0; // numero de semaforo
+	operacion.sem_op = 1; // sumar 1 al semaforo
+	operacion.sem_flg = SEM_UNDO ;
+	int resultado = semop ( this->id , &operacion ,1 ) ;
+	return resultado ;
+}
+
+void Semaforo::eliminar() {
+	semctl ( this->id , 0 , IPC_RMID ) ;
+}
