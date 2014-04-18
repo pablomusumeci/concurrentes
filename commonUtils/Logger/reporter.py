@@ -1,6 +1,6 @@
 import re
 header = open ("./logger_files/header.html", 'r')
-logTxt = open ("../../procesoEmpleado/log.txt", 'r')
+logTxt = open ("/home/pablon/Escritorio/concurrentes.log", 'r')
 footer = open ("./logger_files/footer.html", 'r')
 output = open ("log.html", 'w')
 

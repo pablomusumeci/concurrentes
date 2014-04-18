@@ -8,6 +8,7 @@
 #ifndef AUTO_H_
 #define AUTO_H_
 #include "../StringUtils.h"
+#include "../Logger/Logger.h"
 #define SEPARADOR ';'
 
 class Auto {

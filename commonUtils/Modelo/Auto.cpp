@@ -30,12 +30,19 @@ std::string Auto::serializar(){
 }
 
 void Auto::hidratar(std::string cadena){
-	std::vector<std::string> partes = StringUtils::split(cadena, SEPARADOR);
-	std::vector<std::string> idString = StringUtils::split(partes[0], ':');
-	std::vector<std::string> dineroString = StringUtils::split(partes[1], ':');
+	try {
+		std::vector<std::string> partes = StringUtils::split(cadena, SEPARADOR);
+		std::vector<std::string> idString = StringUtils::split(partes[0], ':');
+		std::vector<std::string> dineroString = StringUtils::split(partes[1], ':');
 
-	this->id = StringUtils::stringToInt(idString[1]);
-	this->dinero = StringUtils::stringToInt(dineroString[1]);
+		this->id = StringUtils::stringToInt(idString[1]);
+		this->dinero = StringUtils::stringToInt(dineroString[1]);
+	} catch (...){
+		Logger log;
+		log.error("Auto", "Parsing exception - Mensaje recibido: " + cadena);
+		this->id = 0;
+		this->dinero = 0;
+	}
 }
 
 int Auto::getDinero(){

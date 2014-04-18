@@ -10,6 +10,8 @@ public:
 
 	void abrir();
 	ssize_t escribir(const void* buffer,const ssize_t buffsize) const;
+private:
+	static const std::string TAG;
 };
 
 #endif /* FIFOESCRITURA_H_ */

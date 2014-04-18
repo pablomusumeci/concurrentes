@@ -23,14 +23,16 @@ int main() {
 	std::string archivoFifo = properties.getProperty("fifo.generador.jde");
 	FifoLectura canal(archivoFifo);
 	char buffer [ 40 ];
+	memset(buffer, '\0', sizeof(buffer));
 	canal.abrir();
-	ssize_t bytesLeidos = canal.leer ( static_cast <void*>( buffer ) , 40 );
+	ssize_t bytesLeidos = canal.leer ( static_cast <void*>( buffer ) , 20 );
 
-	while (bytesLeidos != 0){
+	while (bytesLeidos > 0){
 		std :: string mensaje = buffer;
 		mensaje.resize(bytesLeidos);
 		Auto automovil(mensaje);
 		log.info(TAG, "Recibi: " + automovil.serializar());
+		bytesLeidos = canal.leer ( static_cast <void*>( buffer ) , 20 );
 	}
 
 	canal.cerrar();
