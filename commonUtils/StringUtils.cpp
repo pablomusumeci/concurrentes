@@ -14,6 +14,15 @@ std::string StringUtils::intToString(int n){
 	return res;
 }
 
+std::string StringUtils::intToFixedString(int n, int largo){
+	std::string resultadoParcial = intToString(n);
+	while(resultadoParcial.size() < largo){
+		resultadoParcial = "0" + resultadoParcial;
+	}
+
+	return resultadoParcial;
+}
+
 int StringUtils::stringToInt(std::string s){
 	int numb;
 	std::istringstream ss( s );

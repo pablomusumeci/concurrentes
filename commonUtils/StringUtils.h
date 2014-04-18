@@ -17,6 +17,7 @@ class StringUtils {
 public:
 	static int stringToInt(std::string s);
 	static std::string intToString(int n);
+	static std::string intToFixedString(int n, int largo);
 	static std::vector<std::string> &split(std::string s, char delim, std::vector<std::string> &elems);
 	static std::vector<std::string> split(std::string s, char delim);
 };
