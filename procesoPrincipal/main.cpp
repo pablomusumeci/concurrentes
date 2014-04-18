@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
 
 	Properties properties;
 	std::string archivo = properties.getProperty("process.commonFile");
-	MemoriaCompartida<int> memoria;
+	/*MemoriaCompartida<int> memoria;
 	try {
 		memoria.crear(archivo, 'A');
 
@@ -36,21 +36,27 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	log.info(TAG, "Se creo la memoria compartida.");
+	log.info(TAG, "Se creo la memoria compartida.");*/
 
 	// Usar la clase Proceso para forkear el proceso generador de autos
 
 	// Usar la clase Proceso para forkear el proceso jefe de estacion
 	pid_t procIdJefeEstacion = fork();
 	if (procIdJefeEstacion == 0) {
+		log.info(TAG, "Levanto jefe de estacion");
 		std::string procesoJefeEstacion = properties.getProperty(
 				"process.jefeEstacion");
 		execl(procesoJefeEstacion.c_str(), "procesoJefeEstacion", NULL);
 	} else {
 		// Usar la clase Proceso para forkear los procesos empleados
-
+		pid_t procGenerador = fork();
+			if (procGenerador == 0) {
+				log.info(TAG, "Levanto generador");
+				std::string procesoGenerador = properties.getProperty(
+						"process.generadorAutos");
+				execl(procesoGenerador.c_str(), "procesoGeneradorAutos", NULL);
 		// Esperar por entrada estandar para finalizar
-		printf("Para finalizar la ejecucion ingrese el caracter q.\n");
+		/*printf("Para finalizar la ejecucion ingrese el caracter q.\n");
 		char c;
 		while ((c = getchar()) != 'q') {
 			printf("Para finalizar la ejecucion ingrese el caracter q.\n");
@@ -63,9 +69,8 @@ int main(int argc, char* argv[]) {
 		// No es necesario liberar la memoria porque eso se hace en el destructor.
 //		memoria.liberar();
 
-		log.info(TAG, "Fin de ejecucion");
+		log.info(TAG, "Fin de ejecucion");*/
 		return 0;
+		}
 	}
-
 }
-

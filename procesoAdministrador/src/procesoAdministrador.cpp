@@ -10,17 +10,9 @@ using namespace std;
 
 #define TAG "Proceso Administrador"
 
-int calcularRandom();
-
 int main() {
 
 	// Implementar
 
-}
-
-int calcularRandom() {
-	srand(time(NULL));
-	int resultado = rand() % 100 + 1;
-	return resultado;
 }
 

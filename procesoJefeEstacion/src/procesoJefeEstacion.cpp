@@ -8,7 +8,8 @@ using namespace std;
 #include <Logger/Logger.h>
 #include <Properties/Properties.h>
 #include <StringUtils.h>
-
+#include <Fifo/FifoLectura.h>
+#include <Modelo/Auto.h>
 #define TAG "Jefe de Estacion"
 
 int calcularRandom();
@@ -19,17 +20,21 @@ int main() {
 	log.info(TAG, "Comienzo del proceso jefe de estacion");
 	Properties properties;
 	std::string archivo = properties.getProperty("process.commonFile");
-	try {
-		MemoriaCompartida<int> *buffer = new MemoriaCompartida<int>(archivo, 'A');
+	std::string archivoFifo = properties.getProperty("fifo.generador.jde");
+	FifoLectura canal(archivoFifo);
+	char buffer [ 40 ];
+	canal.abrir();
+	ssize_t bytesLeidos = canal.leer ( static_cast <void*>( buffer ) , 40 );
 
-		int resultado = buffer->leer();
-		log.info(TAG, "Leo el numero " + StringUtils::intToString(resultado)
-				+ " de la memoria compartida");
-		log.info(TAG, "Fin del proceso" );
-	} catch (std::string& mensaje) {
-		log.error(TAG,  mensaje);
+	while (bytesLeidos != 0){
+		std :: string mensaje = buffer;
+		mensaje.resize(bytesLeidos);
+		Auto automovil(mensaje);
+		log.info(TAG, "Recibi: " + automovil.serializar());
 	}
 
+	canal.cerrar();
+	log.info(TAG, "Fin de la lectura");
 	exit(0);
 
 }
