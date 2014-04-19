@@ -3,15 +3,19 @@
 # include <sys/ipc.h>
 # include <sys/sem.h>
 # include <sys/types.h>
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+
 
 class Semaforo {
 	private :
 		int id ;
 		int valorInicial ;
-		int inicializar () ;
 
 	public :
-		Semaforo ( char * nombre , int valorInicial ) ;
+		Semaforo (std::string nombre , char caracter ) ;
+		int inicializar (int valorInicial);
 		virtual ~ Semaforo () ;
 		int p () ; // decrementa
 		int v () ; //incrementa

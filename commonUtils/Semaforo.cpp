@@ -1,16 +1,16 @@
 # include "Semaforo.h"
 
-Semaforo::Semaforo( char * nombre , int valorInicial ) {
+Semaforo::Semaforo(std::string nombre , char caracter ) {
 	this->valorInicial = valorInicial ;
-	key_t clave = ftok ( nombre , 'a' ) ;
+	key_t clave = ftok ( nombre.c_str() , caracter ) ;
 	this->id = semget ( clave ,1 ,0666 | IPC_CREAT ) ;
-	this->inicializar () ;
 }
 
 Semaforo::~Semaforo() {
 }
 
-int Semaforo::inicializar () {
+int Semaforo::inicializar (int valorInicial) {
+	this->valorInicial = valorInicial;
 	union semnum {
 		int val ;
 		struct semid_ds * buf ;

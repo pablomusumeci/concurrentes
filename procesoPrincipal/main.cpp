@@ -13,16 +13,25 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <Modelo/Auto.h>
+#include <Semaforo.h>
+#include <GetOpt.h>
+#include <Process.h>
 #define TAG "Proceso principal"
 
 int main(int argc, char* argv[]) {
 	Logger log;
 	log.info(TAG, "Comienzo de ejecucion");
 
+//	GetOpt options(argc,argv);
+//	options.parse();
+//	int surtidores = options.getSurtidores();
+	int surtidores = 2;
+
 	// Crear un segmento de memoria compartida:
 
 	Properties properties;
 	std::string archivo = properties.getProperty("process.commonFile");
+
 	/*MemoriaCompartida<int> memoria;
 	try {
 		memoria.crear(archivo, 'A');
@@ -70,7 +79,20 @@ int main(int argc, char* argv[]) {
 //		memoria.liberar();
 
 		log.info(TAG, "Fin de ejecucion");*/
+
 		return 0;
 		}
+	}
+
+	std::string archivoSemaforo = properties.getProperty("semaforo.surtidores");
+	std::string archivoEmpleado = properties.getProperty("process.empleado");
+	Semaforo semaforoSurtidor(archivoSemaforo,'s');
+	semaforoSurtidor.inicializar(surtidores);
+	try{
+		Process empleado1(archivoEmpleado);
+		Process empleado2(archivoEmpleado);
+		Process empleado3(archivoEmpleado);
+	}catch(char* e){
+		log.error(TAG, e);
 	}
 }
