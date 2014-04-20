@@ -16,7 +16,21 @@
 #include <Semaforo.h>
 #include <GetOpt.h>
 #include <Proceso.h>
+#include <Modelo/Caja.h>
+#include <Modelo/Empleados.h>
+
 #define TAG "Proceso principal"
+
+void inicializarCajaYListaDeEmpleados(int cantEmpleados, Caja& caja, Empleados& empleados){
+	// Monto incial de la caja = 0
+	caja.inicializar(0);
+	empleados.inicializar(cantEmpleados);
+}
+
+void destruirCajaYListaDeEmpleados(Caja& caja, Empleados& empleados){
+	caja.eliminarRecursos();
+	empleados.eliminarRecursos();
+}
 
 int main(int argc, char* argv[]) {
 
@@ -42,6 +56,12 @@ int main(int argc, char* argv[]) {
 	int surtidores = 2;
 	int empleados = 3;
 
+	/**
+	 * Variables compartidas entre los procesos.
+	 */
+	Empleados arrayEmpleados;
+	Caja caja;
+
 	try{
 		log.info(TAG, "Comienzo de ejecucion");
 
@@ -55,6 +75,11 @@ int main(int argc, char* argv[]) {
 		Proceso Generador(procesoGenerador);
 		*/
 
+		/**
+		 * Descomentar para usar la caja en los empleados
+		 */
+		inicializarCajaYListaDeEmpleados(empleados, caja, arrayEmpleados);
+
 		Semaforo semaforoSurtidor(archivoSemaforo,'s');
 		semaforoSurtidor.inicializar(surtidores);
 
@@ -62,6 +87,13 @@ int main(int argc, char* argv[]) {
 		for (int i = 0; i < empleados; i++){
 			Proceso empleado(archivoEmpleado);
 		}
+		/**
+		 * Limpieza de los semaforos y MC de la caja y el vector de empleados
+		 */
+		std::cout << "Para terminar, ingresar un caracter: " ;
+		getchar();
+		destruirCajaYListaDeEmpleados(caja, arrayEmpleados);
+		semaforoSurtidor.eliminar();
 
 	}catch(char* e){
 		log.error(TAG, e);

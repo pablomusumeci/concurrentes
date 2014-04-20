@@ -12,6 +12,14 @@
 #include <Modelo/Auto.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <Modelo/Caja.h>
+
+int depositarEnCaja(int monto){
+	Caja caja;
+	caja.depositar(monto);
+	int montoNuevo = caja.consultar();
+	return montoNuevo;
+}
 
 int main(int argc, char* argv[]){
 	Logger log;
@@ -29,7 +37,8 @@ int main(int argc, char* argv[]){
 	semaforoSurtidor.v();
 	log.info(tag, "Empleado termino de trabajar, libera surtidor");
 	//TODO: empleado deposita en la caja
-
+	int montoTotal = depositarEnCaja(10);
+	log.info(tag, "Empleado deposito en caja, ahora hay " + StringUtils::intToString(montoTotal));
 	return 0;
 }
 

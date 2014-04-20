@@ -15,6 +15,7 @@ class Semaforo {
 
 	public :
 		Semaforo (std::string nombre , char caracter ) ;
+		Semaforo (char caracter ) ;
 		int inicializar (int valorInicial);
 		virtual ~ Semaforo () ;
 		int p () ; // decrementa

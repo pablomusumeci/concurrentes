@@ -1,4 +1,5 @@
 # include "Semaforo.h"
+#include "Properties/Properties.h"
 
 Semaforo::Semaforo(std::string nombre , char caracter ) {
 	this->valorInicial = valorInicial ;
@@ -48,4 +49,13 @@ int Semaforo::v() {
 
 void Semaforo::eliminar() {
 	semctl ( this->id , 0 , IPC_RMID ) ;
+}
+
+Semaforo::Semaforo(char caracter) {
+	Properties properties;
+	std::string nombre = properties.getProperty("process.commonFile");
+	this->valorInicial = valorInicial ;
+	key_t clave = ftok ( nombre.c_str() , caracter ) ;
+	this->id = semget ( clave ,1 ,0666 | IPC_CREAT ) ;
+
 }
