@@ -15,7 +15,6 @@
 class Properties {
 private:
 	std::map<std::string, std::string> properties;
-
 public:
 	Properties();
 	std::string getProperty(const char* clave);

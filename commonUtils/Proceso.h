@@ -5,8 +5,8 @@
  *      Author: florencia
  */
 
-#ifndef PROCESS_H_
-#define PROCESS_H_
+#ifndef PROCESO_H_
+#define PROCESO_H_
 
 #include <iostream>
 #include <unistd.h>
@@ -15,16 +15,16 @@
 
 using namespace std;
 
-class Process {
+class Proceso {
 public:
-	Process(std::string fileName);
-	Process(const Process& process);
+	Proceso(std::string fileName);
+	Proceso(const Proceso& process);
 	pid_t getId();
 	int getStatus();
 	bool isRunning();
 	void waitProcess();
 	void killProcess();
-	virtual ~Process();
+	virtual ~Proceso();
 
 private:
 	pid_t id;
@@ -35,4 +35,4 @@ private:
 
 
 
-#endif /* PROCESS_H_ */
+#endif /* PROCESO_H_ */

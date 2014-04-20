@@ -38,6 +38,5 @@ std::string Properties::getProperty(const char* clave) {
 }
 
 Properties::~Properties() {
-	// TODO Auto-generated destructor stub
 }
 
