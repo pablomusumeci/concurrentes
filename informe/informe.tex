@@ -78,9 +78,11 @@
 
 	\subsection{Empleado}
 	
-	Este proceso representa el accionar de un empleado cuando atiende un auto. El proceso espera un auto por un pipe, cuando lo lee, busca un surtidor libre, lo cual se representa por medio de un semáforo que se encarga de llevar la cuenta de cuantos surtidores disponibles hay. Una vez tomado el surtidor, procede a atender el auto. En nuestra simulación, atender un auto se traduce en introducir una demora (sleep) antes de grabar el monto cobrado en la caja. Vale aclarar que el sleep mencionado recién es utilizado simplemente para simular la utilización del surtidor, cuya implementacion escapa del ambito de este proyecto, y no es utilizado como mecanismo de coordinación entre ningún par de procesos.
+	Este proceso representa el accionar de un empleado cuando atiende un auto. El proceso espera un auto por un pipe, cuando lo lee, busca un surtidor libre, lo cual se representa por medio de un semáforo que se encarga de llevar la cuenta de cuantos surtidores disponibles hay. Una vez tomado el surtidor, procede a atender el auto. En nuestra simulación, atender un auto se traduce en introducir una demora (sleep) antes de grabar el monto cobrado en la caja. Dicha demora se determinará por medio de una cuenta realizada con la cantidad de dinero que el auto tiene (el cual es determinado de manera aleatoria al momento de su creación). 
+
+	Vale aclarar que el sleep mencionado recién es utilizado simplemente para simular la utilización del surtidor, cuya implementación escapa del ámbito de este proyecto, y no es utilizado como mecanismo de coordinación entre ningún par de procesos.
 	
-	Una vez que termina el tiempo de atención del auto, el empleado busca el control de la caja para grabar lo recaudado. Esta operación es un problema de concurrencia entre todos los procesos empleados, y debe ser coordinada mediante un semáforo binario (es decir, el semáforo está tomado o no.
+	Una vez que termina el tiempo de atención del auto, el empleado busca el control de la caja para grabar lo recaudado. Esta operación es un problema de concurrencia entre todos los procesos empleados, y debe ser coordinada mediante un semáforo binario (es decir, el semáforo está tomado o no).
 	
 	\subsection{Administrador}
 	
@@ -100,14 +102,36 @@
 	
 	\begin{itemize}
 	
-	\item Productor - Jefe de Estación:
+	\item Generador de Autos - Jefe de Estación:
+		\begin{itemize}
+			\item Fifo \texttt{files/generador.jde} para envío de los autos
+		\end{itemize}
 	
 	\item Jefe de Estación - Empleado:
+	\begin{itemize}
+		\item Fifo \texttt{files/jde.empleado} para envío de los autos
+		\item Memoria compartida (arreglo) para detectar empleado disponible
+		% \item Mecanismo para tener bloqueado al empleado cuando esta idle
+	\end{itemize}
 	
+\item Empleado - Empleado (surtidores):
+	\begin{itemize}
+		\item Semáforo \texttt{files/semaforo.surtidores} que representa la 
+		cantidad de surtidores libres, y controla el acceso a los mismos.
+	\end{itemize}
+
 	\item Empleado - Empleado (caja):
-	
+	\begin{itemize}
+		\item Memoria compartida que representa la caja
+		\item Semáforo \texttt{} para acceder a la caja
+	\end{itemize}
+
 	\item Empleado - Administrador:
-	
+	\begin{itemize}
+		\item Memoria compartida que representa la caja
+		\item Semáforo \texttt{} para acceder a la caja
+	\end{itemize}
+
 	\end{itemize}
 
 	\section{Diagrama de estados del proceso Jefe De Estación}
