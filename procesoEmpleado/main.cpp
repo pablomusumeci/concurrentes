@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
 	int timeWorking = 5;
 	log.info(tag, "Comienzo del proceso empleado");
 	while( sigint_handler.getGracefulQuit() == 0){
-		log.info(tag, "Empleado espera por surtidor libre ");
+		/*log.info(tag, "Empleado espera por surtidor libre ");
 		semaforoSurtidor.p();
 		log.info(tag, "Empleado trabajando ");
 		sleep(timeWorking);
@@ -43,9 +43,11 @@ int main(int argc, char* argv[]){
 		log.info(tag, "Empleado termino de trabajar, libera surtidor");
 		//TODO: empleado deposita en la caja
 		int montoTotal = depositarEnCaja(10);
-		log.info(tag, "Empleado deposito en caja, ahora hay " + StringUtils::intToString(montoTotal));
+		log.info(tag, "Empleado deposito en caja, ahora hay " + StringUtils::intToString(montoTotal));*/
+		sleep(2);
 	}
 
+	log.info(tag, "Proceso empleado finalizado");
 	return 0;
 }
 

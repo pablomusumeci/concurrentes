@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 
 	Logger log;
 
-	std::vector<Proceso> empleados;
+	std::vector<Proceso*> empleados;
 
 	std::string archivo = "";
 	std::string procesoJefeEstacion = "";
@@ -78,11 +78,11 @@ int main(int argc, char* argv[]) {
 	try{
 		log.info(TAG, "Comienzo de ejecucion");
 
-		log.info(TAG, "Levanto jefe de estacion");
+/*		log.info(TAG, "Levanto jefe de estacion");
 		Proceso JefeEstacion(procesoJefeEstacion);
 
 		log.info(TAG, "Levanto generador de autos");
-		Proceso Generador(procesoGenerador);
+		Proceso Generador(procesoGenerador);*/
 
 		/**
 		 * Descomentar para usar la caja en los empleados
@@ -94,7 +94,9 @@ int main(int argc, char* argv[]) {
 
 		log.info(TAG, "Levanto empleados");
 		for (int i = 0; i < CantEmpleados; i++){
-			Proceso empleado(archivoEmpleado);
+
+			Proceso* empleado = new Proceso(archivoEmpleado);
+			log.info(TAG, "Creo empleado numero: " + StringUtils::intToString(i) + " - PID: " +StringUtils::intToString(empleado->getId()));
 			empleados.push_back(empleado);
 		}
 		/**
@@ -103,12 +105,12 @@ int main(int argc, char* argv[]) {
 		std::cout << "Para terminar, ingresar un caracter: " ;
 		getchar();
 
-		for (std::vector<Proceso>::iterator it = empleados.begin() ; it != empleados.end(); ++it){
-			log.info(TAG, "Cerrando empleado ID: " + it->getId());
-			it->interrupt();
+		for (std::vector<Proceso*>::iterator it = empleados.begin() ; it != empleados.end(); ++it){
+			log.info(TAG, "Cerrando empleado ID: " + (*it)->getId());
+			(*it)->interrupt();
 		}
-		Generador.interrupt();
-		JefeEstacion.interrupt();
+		//Generador.interrupt();
+		//JefeEstacion.interrupt();
 		destruirCajaYListaDeEmpleados(caja, arrayEmpleados);
 		semaforoSurtidor.eliminar();
 
