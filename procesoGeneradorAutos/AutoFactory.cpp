@@ -7,7 +7,7 @@
 
 #include "AutoFactory.h"
 
-AutoFactory::AutoFactory():id(0) {
+AutoFactory::AutoFactory():id(1) {
 }
 
 AutoFactory::~AutoFactory() {
@@ -21,6 +21,6 @@ Auto* AutoFactory::generar(){
 
 int AutoFactory::generarRandom(){
 	srand(time(NULL));
-	int resultado = rand() % 100 + 1;
+	int resultado = rand() % 999 + 1;
 	return resultado;
 }

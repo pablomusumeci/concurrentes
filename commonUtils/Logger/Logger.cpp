@@ -102,8 +102,7 @@ void Logger::setLogLevel(int nivelLog) {
 
 Logger::Logger() {
 	nivelDeLog = NIVEL_GLOBAL;
-	Properties properties;
-	logFileName = properties.getProperty("file.log.location");
+	logFileName = "concurrentes.log";
 	archivoLog.open(logFileName.c_str(),  std::ios::app);
 }
 

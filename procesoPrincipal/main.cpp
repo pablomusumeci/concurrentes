@@ -37,7 +37,6 @@ int main(int argc, char* argv[]) {
 
 	Logger log;
 
-
 	std::vector<Proceso> empleados;
 
 	std::string archivo = "";

@@ -13,6 +13,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <Modelo/Caja.h>
+#include <Seniales/SignalHandler.h>
+#include <Seniales/SIGINT_Handler.h>
 
 int depositarEnCaja(int monto){
 	Caja caja;
@@ -24,21 +26,26 @@ int depositarEnCaja(int monto){
 int main(int argc, char* argv[]){
 	Logger log;
 	Properties properties;
+	SIGINT_Handler sigint_handler;
+	SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
 	std::string tag = "Empleado" + StringUtils::intToString(getpid());
 	std::string archivoSemaforo = properties.getProperty("semaforo.surtidores");
 	Semaforo semaforoSurtidor(archivoSemaforo , 's');
 	//TODO: tiempo en surtidor proporcional a la plata del auto
 	int timeWorking = 5;
 	log.info(tag, "Comienzo del proceso empleado");
-	log.info(tag, "Empleado espera por surtidor libre ");
-	semaforoSurtidor.p();
-	log.info(tag, "Empleado trabajando ");
-	sleep(timeWorking);
-	semaforoSurtidor.v();
-	log.info(tag, "Empleado termino de trabajar, libera surtidor");
-	//TODO: empleado deposita en la caja
-	int montoTotal = depositarEnCaja(10);
-	log.info(tag, "Empleado deposito en caja, ahora hay " + StringUtils::intToString(montoTotal));
+	while( sigint_handler.getGracefulQuit() == 0){
+		log.info(tag, "Empleado espera por surtidor libre ");
+		semaforoSurtidor.p();
+		log.info(tag, "Empleado trabajando ");
+		sleep(timeWorking);
+		semaforoSurtidor.v();
+		log.info(tag, "Empleado termino de trabajar, libera surtidor");
+		//TODO: empleado deposita en la caja
+		int montoTotal = depositarEnCaja(10);
+		log.info(tag, "Empleado deposito en caja, ahora hay " + StringUtils::intToString(montoTotal));
+	}
+
 	return 0;
 }
 
