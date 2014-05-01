@@ -11,6 +11,7 @@ using namespace std;
 #include <Seniales/SIGINT_Handler.h>
 #include <StringUtils.h>
 #include <Fifo/FifoLectura.h>
+#include <Fifo/FifoEscritura.h>
 #include <Modelo/Auto.h>
 #include <Modelo/Empleados.h>
 #define TAG "Jefe de Estacion"
@@ -23,29 +24,38 @@ int main() {
 	log.info(TAG, "Comienzo del proceso jefe de estacion");
 	Properties properties;
 	std::string archivo = properties.getProperty("process.commonFile");
-	std::string archivoFifo = properties.getProperty("fifo.generador.jde");
+	std::string archivoFifoGenJde = properties.getProperty("fifo.generador.jde");
+	std::string archivoFifoJdeEmp = properties.getProperty("fifo.jde.empleado");
 	SIGINT_Handler sigint_handler;
 	SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
 
-	FifoLectura canal(archivoFifo);
+	FifoLectura canalGenJde(archivoFifoGenJde);
+	FifoEscritura canalJdeEmp(archivoFifoJdeEmp);
 	char buffer [ TAM_BUFFER ];
 	memset(buffer, '\0', TAM_BUFFER);
-	canal.abrir();
+	canalGenJde.abrir();
+	canalJdeEmp.abrir();
 
 	// Grupo de empleados
 	Empleados empleados;
 
 	while (sigint_handler.getGracefulQuit() == 0){
-		ssize_t bytesLeidos = canal.leer ( static_cast <void*>( buffer ) , TAM_BUFFER );
+		ssize_t bytesLeidos = canalGenJde.leer ( static_cast <void*>( buffer ) , TAM_BUFFER );
 		std :: string mensaje = buffer;
 		mensaje.resize(bytesLeidos);
 		Auto automovil(mensaje);
 		log.info(TAG, "Recibi: " + automovil.serializar());
 
+		//TODO: Verificar si hay empleado libre, en caso de que exista:
+
+		std::string mensajeEnviar = automovil.serializar();
+		log.info(TAG, "Enviando auto: " + mensajeEnviar + " Largo: " + StringUtils::intToString(mensajeEnviar.length()));
+		canalJdeEmp.escribir( static_cast < const void*>( mensajeEnviar.c_str() ) , mensajeEnviar.length());
 	}
 
 	try{
-		canal.cerrar();
+		canalGenJde.cerrar();
+		canalJdeEmp.cerrar();
 	} catch (std::string& e){
 		log.error(TAG,e);
 	}

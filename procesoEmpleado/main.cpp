@@ -13,42 +13,16 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <Modelo/Caja.h>
+#include <Fifo/FifoLectura.h>
 #include <Seniales/SignalHandler.h>
 #include <Seniales/SIGINT_Handler.h>
+#define TAM_BUFFER 18
 
 int depositarEnCaja(int monto){
 	Caja caja;
 	caja.depositar(monto);
 	int montoNuevo = caja.consultar();
 	return montoNuevo;
-}
-
-int main(int argc, char* argv[]){
-	Logger log;
-	Properties properties;
-	SIGINT_Handler sigint_handler;
-	SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
-	std::string tag = "Empleado" + StringUtils::intToString(getpid());
-	std::string archivoSemaforo = properties.getProperty("semaforo.surtidores");
-	Semaforo semaforoSurtidor(archivoSemaforo , 's');
-	//TODO: tiempo en surtidor proporcional a la plata del auto
-	int timeWorking = 5;
-	log.info(tag, "Comienzo del proceso empleado");
-	while( sigint_handler.getGracefulQuit() == 0){
-		/*log.info(tag, "Empleado espera por surtidor libre ");
-		semaforoSurtidor.p();
-		log.info(tag, "Empleado trabajando ");
-		sleep(timeWorking);
-		semaforoSurtidor.v();
-		log.info(tag, "Empleado termino de trabajar, libera surtidor");
-		//TODO: empleado deposita en la caja
-		int montoTotal = depositarEnCaja(10);
-		log.info(tag, "Empleado deposito en caja, ahora hay " + StringUtils::intToString(montoTotal));*/
-		sleep(2);
-	}
-
-	log.info(tag, "Proceso empleado finalizado");
-	return 0;
 }
 
 /**
@@ -59,3 +33,54 @@ int main(int argc, char* argv[]){
 int tiempoDeTrabajo(Auto& at){
 	return (at.getDinero() % 10) + 2;
 }
+
+int main(int argc, char* argv[]){
+	Logger log;
+	Properties properties;
+	SIGINT_Handler sigint_handler;
+	SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
+	std::string tag = "Empleado " + StringUtils::intToString(getpid());
+	std::string archivoFifoJdeEmp = properties.getProperty("fifo.jde.empleado");
+	std::string archivoSemaforoJdeEmp = properties.getProperty("semaforo.jde.empleado");
+	std::string archivoSemaforoSurtidores = properties.getProperty("semaforo.surtidores");
+
+	FifoLectura canalJdeEmp(archivoFifoJdeEmp);
+	Semaforo semaforoFifoJdeEmp(archivoSemaforoJdeEmp, 's');
+	Semaforo semaforoSurtidor(archivoSemaforoSurtidores, 's');
+	char buffer [ TAM_BUFFER ];
+	memset(buffer, '\0', TAM_BUFFER);
+	canalJdeEmp.abrir();
+
+	log.info(tag, "Comienzo del proceso empleado");
+	while( sigint_handler.getGracefulQuit() == 0){
+		log.info(tag, "Libre");
+		semaforoFifoJdeEmp.p();
+		log.info(tag, "Espera un auto en el fifo");
+		ssize_t bytesLeidos = canalJdeEmp.leer ( static_cast <void*>( buffer ) , TAM_BUFFER);
+		if(bytesLeidos >0){
+			std :: string mensajeRecibido = buffer;
+			mensajeRecibido.resize(bytesLeidos);
+			Auto automovil(mensajeRecibido);
+			log.info(tag, "Recibi: " + automovil.serializar());
+		}
+		semaforoFifoJdeEmp.v();
+		log.info(tag, "Libere semaforo ");
+/*
+		int tiempoTrabajo = tiempoDeTrabajo(automovil);
+		log.info(tag, "Empleado espera por surtidor libre ");
+		semaforoSurtidor.p();
+		log.info(tag, "Empleado trabajando " + tiempoTrabajo);
+		sleep(timeWorking);
+		semaforoSurtidor.v();
+		log.info(tag, "Empleado termino de trabajar, libera surtidor");
+		//TODO: empleado deposita en la caja
+		int montoTotal = depositarEnCaja(10);
+		log.info(tag, "Empleado deposito en caja, ahora hay " + StringUtils::intToString(montoTotal));
+*/
+	}
+
+	log.info(tag, "Proceso empleado finalizado");
+	return 0;
+}
+
+

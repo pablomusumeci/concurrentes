@@ -44,6 +44,7 @@ int main(int argc, char* argv[]) {
 	std::string procesoGenerador = "";
 	std::string archivoSemaforo = "";
 	std::string archivoEmpleado = "";
+	std::string archivoSemaforoJdeEmp = "";
 
 	// Lectura de Properties
 	try{
@@ -53,6 +54,7 @@ int main(int argc, char* argv[]) {
 		procesoGenerador = properties.getProperty("process.generadorAutos");
 		archivoSemaforo = properties.getProperty("semaforo.surtidores");
 		archivoEmpleado = properties.getProperty("process.empleado");
+		archivoSemaforoJdeEmp = properties.getProperty("semaforo.jde.empleado");
 	} catch (...){
 		log.fatal(TAG, "Error leyendo las properties");
 		return 1;
@@ -78,11 +80,11 @@ int main(int argc, char* argv[]) {
 	try{
 		log.info(TAG, "Comienzo de ejecucion");
 
-/*		log.info(TAG, "Levanto jefe de estacion");
+		log.info(TAG, "Levanto jefe de estacion");
 		Proceso JefeEstacion(procesoJefeEstacion);
 
 		log.info(TAG, "Levanto generador de autos");
-		Proceso Generador(procesoGenerador);*/
+		Proceso Generador(procesoGenerador);
 
 		/**
 		 * Descomentar para usar la caja en los empleados
@@ -91,6 +93,8 @@ int main(int argc, char* argv[]) {
 
 		Semaforo semaforoSurtidor(archivoSemaforo,'s');
 		semaforoSurtidor.inicializar(CantSurtidores);
+		Semaforo semaforoJdeEmpleados(archivoSemaforoJdeEmp,'s');
+		semaforoJdeEmpleados.inicializar(1);
 
 		log.info(TAG, "Levanto empleados");
 		for (int i = 0; i < CantEmpleados; i++){
@@ -109,8 +113,8 @@ int main(int argc, char* argv[]) {
 			log.info(TAG, "Cerrando empleado ID: " + StringUtils::intToString((int)(*it)->getId()));
 			(*it)->interrupt();
 		}
-		//Generador.interrupt();
-		//JefeEstacion.interrupt();
+		Generador.interrupt();
+		JefeEstacion.interrupt();
 		destruirCajaYListaDeEmpleados(caja, arrayEmpleados);
 		semaforoSurtidor.eliminar();
 
