@@ -36,17 +36,28 @@ void destruirCajaYListaDeEmpleados(Caja& caja, Empleados& empleados){
 int main(int argc, char* argv[]) {
 
 	Logger log;
-	Properties properties;
+
 
 	std::vector<Proceso> empleados;
 
-	// Lectura de Properties
-	std::string archivo = properties.getProperty("process.commonFile");
-	std::string procesoJefeEstacion = properties.getProperty("process.jefeEstacion");
-	std::string procesoGenerador = properties.getProperty("process.generadorAutos");
-	std::string archivoSemaforo = properties.getProperty("semaforo.surtidores");
-	std::string archivoEmpleado = properties.getProperty("process.empleado");
+	std::string archivo = "";
+	std::string procesoJefeEstacion = "";
+	std::string procesoGenerador = "";
+	std::string archivoSemaforo = "";
+	std::string archivoEmpleado = "";
 
+	// Lectura de Properties
+	try{
+		Properties properties;
+		archivo = properties.getProperty("process.commonFile");
+		procesoJefeEstacion = properties.getProperty("process.jefeEstacion");
+		procesoGenerador = properties.getProperty("process.generadorAutos");
+		archivoSemaforo = properties.getProperty("semaforo.surtidores");
+		archivoEmpleado = properties.getProperty("process.empleado");
+	} catch (...){
+		log.fatal(TAG, "Error leyendo las properties");
+		return 1;
+	}
 
 	/* Descomentar para leer opciones por parametro
 	GetOpt options(argc,argv);
@@ -103,6 +114,9 @@ int main(int argc, char* argv[]) {
 		semaforoSurtidor.eliminar();
 
 	}catch(char* e){
+		log.error(TAG, e);
+		std::cout << e << std::endl;
+	}catch(std::string& e){
 		log.error(TAG, e);
 		std::cout << e << std::endl;
 	}
