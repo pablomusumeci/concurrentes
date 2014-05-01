@@ -9,12 +9,7 @@
 #include "../Properties/Properties.h"
 #include <stdlib.h>
 
-struct _empleados{
-	int empleados[MAX_EMPLEADOS];
-};
-
-Empleados::Empleados(): semaforo('C'), semaforoAcceso('B') {
-	this->cantidad = 0;
+Empleados::Empleados(): semaforo('B') {
 	Properties properties;
 	std::string archivo = properties.getProperty("process.commonFile");
 	try {
@@ -24,56 +19,35 @@ Empleados::Empleados(): semaforo('C'), semaforoAcceso('B') {
 	}
 }
 
-int Empleados::solicitarEmpleadoLibre() {
-	// Espero a tener algun empleado libre
+bool Empleados::hayEmpleadoLibre() {
+	// Tomo el semaforo binario
 	semaforo.p();
-	// si lo hya, tomo el semaforo binario
-	semaforoAcceso.p();
-	bloqueEmpleados empleados = memoria.leer();
-	int surtidor = -1;
-	for (int i=0; i < cantidad; ++i){
-		if (empleados.empleados[i] == 0) {
-			// Esta libre
-			surtidor = i;
-			empleados.empleados[i] = 1;
-			break;
-		}
-	}
-	memoria.escribir(empleados);
+	int libres = memoria.leer();
 	// Libero el semaforo binario
-	semaforoAcceso.v();
-	return surtidor;
+	semaforo.v();
+	return libres > 0;
 }
 
-void Empleados::devolverEmpleado(int surtidor) {
+void Empleados::devolverEmpleado() {
 	// Aunque no haya empleados libres, y por lo tanto, el semaforo vale cero,
 	// entro y anoto al empleado libre.
-	semaforoAcceso.p();
-	bloqueEmpleados empleados = memoria.leer();
-	empleados.empleados[surtidor] = 0;
+	semaforo.p();
+	int empleados = memoria.leer();
+	empleados++;
 	memoria.escribir(empleados);
-	// Aumento el semaforo porque hay un empleado libre
-	semaforo.v();
 	// Libero el semaforo binario de control de acceso
-	semaforoAcceso.v();
+	semaforo.v();
 }
 
 Empleados::~Empleados() {
 }
 
 void Empleados::inicializar(int cantidad) {
-	this->cantidad = cantidad;
-	bloqueEmpleados empleados;
-	for (int i=0; i < cantidad; ++i){
-		empleados.empleados[i] = 0;
-	}
-	memoria.escribir(empleados);
-	semaforo.inicializar(cantidad);
-	semaforoAcceso.inicializar(1);
+	memoria.escribir(cantidad);
+	semaforo.inicializar(1);
 }
 
 void Empleados::eliminarRecursos() {
 	semaforo.eliminar();
-	semaforoAcceso.eliminar();
 //	memoria.liberar();
 }

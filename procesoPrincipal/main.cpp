@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
 		getchar();
 
 		for (std::vector<Proceso*>::iterator it = empleados.begin() ; it != empleados.end(); ++it){
-			log.info(TAG, "Cerrando empleado ID: " + (*it)->getId());
+			log.info(TAG, "Cerrando empleado ID: " + StringUtils::intToString((int)(*it)->getId()));
 			(*it)->interrupt();
 		}
 		//Generador.interrupt();

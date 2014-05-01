@@ -15,6 +15,7 @@
 #include "AutoFactory.h"
 
 int main(int argc, char* argv[]) {
+	try {
 	SIGINT_Handler sigint_handler;
 	SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
 	std::string tag = "Generador de autos";
@@ -39,4 +40,7 @@ int main(int argc, char* argv[]) {
 	canal.eliminar();
 	log.info(tag, "Ejecucion finalizada.");
 	return 0;
+	} catch (char const* e) {
+		std::cout << "Error " << e << std::endl;
+	}
 }

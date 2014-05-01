@@ -19,7 +19,10 @@ Properties::Properties() {
 	}
 	while (!properties.eof()) {
 		std::string linea;
-		properties >> linea;
+		getline(properties, linea);
+		if (linea.empty()){
+			continue;
+		}
 		char* copia = strdup(linea.c_str());
 		char* aux;
 		char* clave = strtok_r(copia, "=", &aux);

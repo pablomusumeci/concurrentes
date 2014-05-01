@@ -12,6 +12,7 @@ using namespace std;
 #include <StringUtils.h>
 #include <Fifo/FifoLectura.h>
 #include <Modelo/Auto.h>
+#include <Modelo/Empleados.h>
 #define TAG "Jefe de Estacion"
 #define TAM_BUFFER 18
 int calcularRandom();
@@ -30,12 +31,17 @@ int main() {
 	char buffer [ TAM_BUFFER ];
 	memset(buffer, '\0', TAM_BUFFER);
 	canal.abrir();
+
+	// Grupo de empleados
+	Empleados empleados;
+
 	while (sigint_handler.getGracefulQuit() == 0){
 		ssize_t bytesLeidos = canal.leer ( static_cast <void*>( buffer ) , TAM_BUFFER );
 		std :: string mensaje = buffer;
 		mensaje.resize(bytesLeidos);
 		Auto automovil(mensaje);
 		log.info(TAG, "Recibi: " + automovil.serializar());
+
 	}
 
 	try{
