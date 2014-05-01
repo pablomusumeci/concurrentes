@@ -22,10 +22,10 @@ Auto::~Auto() {
 std::string Auto::serializar(){
 	std::string resultado = "";
 	resultado += "ID:";
-	resultado += StringUtils::intToString(this->id);
+	resultado += StringUtils::intToFixedString(this->id, 3);
 	resultado += SEPARADOR;
 	resultado += "Dinero:";
-	resultado += StringUtils::intToString(this->dinero);
+	resultado += StringUtils::intToFixedString(this->dinero, 4);
 	return resultado;
 }
 

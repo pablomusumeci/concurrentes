@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include <vector>
 #include <Modelo/Auto.h>
 #include <Semaforo.h>
 #include <GetOpt.h>
@@ -37,6 +38,8 @@ int main(int argc, char* argv[]) {
 	Logger log;
 	Properties properties;
 
+	std::vector<Proceso> empleados;
+
 	// Lectura de Properties
 	std::string archivo = properties.getProperty("process.commonFile");
 	std::string procesoJefeEstacion = properties.getProperty("process.jefeEstacion");
@@ -48,13 +51,13 @@ int main(int argc, char* argv[]) {
 	/* Descomentar para leer opciones por parametro
 	GetOpt options(argc,argv);
 	options.parse();
-	int surtidores = options.getSurtidores();
-	int surtidores = options.getSurtidores();
+	int CantSurtidores = options.getSurtidores();
+	int CantEmpleados = options.getEmpleados();
 	*/
 
 	//TODO: Borrar para la entrega
-	int surtidores = 2;
-	int empleados = 3;
+	int CantSurtidores = 2;
+	int CantEmpleados = 3;
 
 	/**
 	 * Variables compartidas entre los procesos.
@@ -65,33 +68,37 @@ int main(int argc, char* argv[]) {
 	try{
 		log.info(TAG, "Comienzo de ejecucion");
 
-		/* JDE
 		log.info(TAG, "Levanto jefe de estacion");
 		Proceso JefeEstacion(procesoJefeEstacion);
-		*/
 
-		/* Generador
 		log.info(TAG, "Levanto generador de autos");
 		Proceso Generador(procesoGenerador);
-		*/
 
 		/**
 		 * Descomentar para usar la caja en los empleados
 		 */
-		inicializarCajaYListaDeEmpleados(empleados, caja, arrayEmpleados);
+		inicializarCajaYListaDeEmpleados(CantEmpleados, caja, arrayEmpleados);
 
 		Semaforo semaforoSurtidor(archivoSemaforo,'s');
-		semaforoSurtidor.inicializar(surtidores);
+		semaforoSurtidor.inicializar(CantSurtidores);
 
 		log.info(TAG, "Levanto empleados");
-		for (int i = 0; i < empleados; i++){
+		for (int i = 0; i < CantEmpleados; i++){
 			Proceso empleado(archivoEmpleado);
+			empleados.push_back(empleado);
 		}
 		/**
 		 * Limpieza de los semaforos y MC de la caja y el vector de empleados
 		 */
 		std::cout << "Para terminar, ingresar un caracter: " ;
 		getchar();
+
+		for (std::vector<Proceso>::iterator it = empleados.begin() ; it != empleados.end(); ++it){
+			log.info(TAG, "Cerrando empleado ID: " + it->getId());
+			it->interrupt();
+		}
+		Generador.interrupt();
+		JefeEstacion.interrupt();
 		destruirCajaYListaDeEmpleados(caja, arrayEmpleados);
 		semaforoSurtidor.eliminar();
 

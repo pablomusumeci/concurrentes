@@ -49,6 +49,13 @@ void Proceso::killProcess() {
 	status = -1;
 }
 
+void Proceso::interrupt() {
+	if (!isRunning()) throw("process error, process not running");
+	if (kill(id, SIGINT) == -1) throw("process error, could not interrupt process");
+	id = 0;
+	status = -1;
+}
+
 Proceso::~Proceso() {
 	waitProcess();
 }

@@ -24,6 +24,7 @@ public:
 	bool isRunning();
 	void waitProcess();
 	void killProcess();
+	void interrupt();
 	virtual ~Proceso();
 
 private:
