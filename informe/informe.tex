@@ -17,7 +17,67 @@
 \tableofcontents
 \newpage
 \section{Diseño}
+	\subsection{Proceso Principal}
 
+		Es el encargado de lanzar los procesos que componen la simulación, inicializar los recursos
+		compartidos como semáforos y memorias compartidas.
+
+		También se encarga de, cuando el usuario decide finalizar la simulación, enviar las señales
+		apropiadas para que dichos procesos cesen el uso de los recursos. Luego, espera a la finalización
+		de dichos procesos hijos, para finalizar la simulación.
+
+	\subsection{Generador de Autos}
+		
+		Este proceso es el encargado de crear los autos que llegan a la estación. Para
+		dicho propósito, genera autos en intervalos de tiempo especificado en el archivo de configuración. 
+		Cada auto está representado por un ID y una cantidad de dinero que va a gastar en la estación.
+
+		El Generador de Autos interactúa con el Jefe de Estación, y dicha interacción se puede
+		asemejar al problema \textbf{Producer - Consumer}, debido a que el Generador produce
+		los autos que el Jefe de Estación va a recibir. 
+
+		La comunicación entre el Generador de Autos y el jefe de Estación se realiza por medio de un
+		FIFO.
+
+
+	\subsection{Jefe de Estación}
+		Este proceso se encarga de recibir los autos nuevos que van llegando a la estación. 
+		En este caso, el Jefe de Estación es el \textbf{consumer} de información.
+
+		Una vez que logró extraer un automóvil del buffer exitosamente, debe asignarle 
+		un empleado al auto recibido, en caso de que exista algun empleado disponible 
+		en ese mismo instante, caso contrario, deberá redirigir el mismo hacia la salida.
+		
+		El jede de estación, lee un variable que se encuentra en memoria compartida, la cual
+		representa el número de empleados disponibles en ese momento. Para acceder a dicha variable,
+		deberá pedir acceso a un semáforo que restringe su uso de manera exclusiva.
+		En el caso de exista algún empleado libre (lo cual se deduce de que el valor de dicha variable
+		es mayor a cero), escribe el automóvil recibido por parte del generador en un FIFO.
+
+
+	\subsection{Empleado}
+	
+		Este proceso representa el accionar de un empleado cuando atiende un auto. Los empleados piden acceso
+		de manera exclusiva a FIFO en el que el jefe de estación escribirá los autos, de manera que no se
+		atienda a un auto más de una vez por diferentes empleados. El acceso al FIFO por parte de los empleados,
+		se encuentra controlado por un semáforo. 
+
+		Una vez que un empleado recibe un auto, modifica la variable que lleva la cuenta de los empleados libres, 
+		disminuyendo en uno su valor. Una vez que el empleado tiene el automóvil en su poder, se dirige hacia los
+		surtidores, esperando en un semáforo que representa la cantidad de surtidores disponibles. 
+
+		El tiempo de atención del automóvil se calcula a partir del dinero que lleva el mismo. Dicho tiempo no es
+		proporcional al dinero que el automóvil dispone. Luego de la espera, libera el surtidor utilizado y se dirige
+		a la caja para depositar el monto que el mismo llevaba. La caja, es implementada como una variable del tipo entero
+		en memoria compartida, que debe accederse de a un proceso a la vez por medio de un semáforo.
+
+		Cuando se finaliza la atención del automóvil, el empleado incrementa la variable que representa la cantidad
+		de empleados libres, y vuelve a pedir acceso al FIFO en la espera de un nuevo cliente
+	
+	\subsection{Administrador}
+	
+	El proceso administrador tiene la facultad de consultar el valor guardado en la caja. Puede hacerlo en cualquier momento, y su consulta sobre la caja esta controlada de la misma forma que el empleado. La diferencia con el empleado es que el Administrador no espera a un auto, sino que puede consultar en cualquier momento. En nuestra implementación, 
+	el administrador consulta la caja de manera periódica, siendo configurable el período de espera entre cada consulta.
 \section{Hipótesis}
 
 \begin{itemize}
@@ -46,55 +106,22 @@
 	Ejemplo:
 
 	\texttt{./procesoPrincipal -e 5 -s 7}
+
+	\item Finalizar la simulación: El proceso principal se quedará esperando por el 
+	ingreso de un caracter cualquiera, como orden para finalizar todos los procesos
+	que componen la simulación.
+
 \end{itemize}
 
-\section{Procesos del proyecto}
 
-	\subsection{Generador de Autos}
-		
-		Este proceso es el encargado de crear los autos que llegan a la estación. Para
-		dicho propósito, genera un auto en intervalos de tiempo elegidos de forma aleatoria. 
-		Cada auto está representado por un ID y una cantidad de dinero que va a gastar en la estación.
-
-		El Generador de Autos interactúa con el Jefe de Estación, y dicha interacción se puede
-		asemejar al problema \textbf{Producer - Consumer}, debido a que el Generador produce
-		los autos que el Jefe de Estación va a recibir. 
-
-		Al analizar este problema, debemos tener en cuenta que el \textbf{producer} no debería
-		agregar información al medio que comparte con el consumer, si el mismo se encuentra lleno.
-		En esta situación optamos por enviar a dormir al proceso generador, por un tiempo
-		aleatorio, y volver a intentar escribir en el buffer cuando se despierte.
-
-	\subsection{Jefe de Estación}
-		Este proceso se encarga de recibir los autos nuevos que van llegando a la estación. 
-		En este caso, el Jefe de Estación es el \textbf{consumer} de información, y debe
-		cerciorarse de no intentar extraer información del buffer si el mismo esta vacío.
-
-		Una vez que logró extraer un automóvil del buffer exitosamente, debe asignarle 
-		un empleado al auto recibido, en caso de que exista algun empleado disponible 
-		en ese mismo instante, caso contrario,deberá redirigir el mismo hacia la salida.
-		
-		Para esto, el proceso explora un array de valores lógicos (booleanos), que representan la disponibilidad de los empleados. La posición del booleano en el array es tambien el ID de empleado (no confundir con el PID del proceso empleado). Una vez hallado al empleado, se marca el valor lógico correspondiente como ``Ocupado''. Luego se graban los datos del auto en un pipe compartido con le proceso Empleado.
-
-	\subsection{Empleado}
-	
-	Este proceso representa el accionar de un empleado cuando atiende un auto. El proceso espera un auto por un pipe, cuando lo lee, busca un surtidor libre, lo cual se representa por medio de un semáforo que se encarga de llevar la cuenta de cuantos surtidores disponibles hay. Una vez tomado el surtidor, procede a atender el auto. En nuestra simulación, atender un auto se traduce en introducir una demora (sleep) antes de grabar el monto cobrado en la caja. Dicha demora se determinará por medio de una cuenta realizada con la cantidad de dinero que el auto tiene (el cual es determinado de manera aleatoria al momento de su creación). 
-
-	Vale aclarar que el sleep mencionado recién es utilizado simplemente para simular la utilización del surtidor, cuya implementación escapa del ámbito de este proyecto, y no es utilizado como mecanismo de coordinación entre ningún par de procesos.
-	
-	Una vez que termina el tiempo de atención del auto, el empleado busca el control de la caja para grabar lo recaudado. Esta operación es un problema de concurrencia entre todos los procesos empleados, y debe ser coordinada mediante un semáforo binario (es decir, el semáforo está tomado o no).
-	
-	\subsection{Administrador}
-	
-	El proceso administrador tiene la facultad de consultar el valor guardado en la caja. Puede hacerlo en cualquier momento, y su consulta sobre la caja esta controlada de la misma forma que el empleado. La diferencia con el empleado es que el Administrador no espera a un auto, sino que puede consultar en cualquier momento.
-	
 	\section{Diagrama esquemático de interacciones}
 	
 	Ver figura \ref{diagrama}
 
 \begin{figure}
 \label{diagrama}
-\includegraphics[width=1.0\textwidth]{esquema.png}
+\includegraphics[angle=90, scale = 0.34]{esquema.png}
+\centering
 \caption{Diagrama esquemático de interacciones}
 \end{figure}
 
@@ -110,34 +137,36 @@
 	\item Jefe de Estación - Empleado:
 	\begin{itemize}
 		\item Fifo \texttt{files/jde.empleado} para envío de los autos
-		\item Memoria compartida (arreglo) para detectar empleado disponible
-		% \item Mecanismo para tener bloqueado al empleado cuando esta idle
+		\item Memoria compartida con la cantidad de empleados disponibles
+		\item Semáforo para controlar acceso a la memoria compartida.
+		\item Semáforo para controlar acceso al Fifo, por parte del empleado (lector).
 	\end{itemize}
-	
-\item Empleado - Empleado (surtidores):
+
+	\item Empleado (surtidores):
 	\begin{itemize}
 		\item Semáforo \texttt{files/semaforo.surtidores} que representa la 
 		cantidad de surtidores libres, y controla el acceso a los mismos.
 	\end{itemize}
 
-	\item Empleado - Empleado (caja):
+	\item Empleado (caja):
 	\begin{itemize}
 		\item Memoria compartida que representa la caja
-		\item Semáforo \texttt{} para acceder a la caja
+		\item Semáforo que controla el acceso a la caja
 	\end{itemize}
 
-	\item Empleado - Administrador:
+	\item Administrador (caja):
 	\begin{itemize}
 		\item Memoria compartida que representa la caja
-		\item Semáforo \texttt{} para acceder a la caja
+		\item Semáforo que controla el acceso a la caja
 	\end{itemize}
 
 	\end{itemize}
-
+	\newpage
 	\section{Diagrama de estados del proceso Jefe De Estación}
 
-	\begin{figure}
-	\includegraphics[width=1.0\textwidth]{FSM_JDE.png}[h]
+	\begin{figure}[h]
+	\includegraphics[scale=0.75]{FSM_JDE.png}
+	\centering
 	% https://docs.google.com/drawings/d/1fSqCpKnnYxksGUfpufRSJbsfxkYRRuSEGUDkyJf5Sf0/edit?usp=sharing
 	\caption{FSM del Jefe de Estación}
 	\end{figure}
