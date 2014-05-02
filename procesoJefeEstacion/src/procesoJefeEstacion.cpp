@@ -41,16 +41,18 @@ int main() {
 
 	while (sigint_handler.getGracefulQuit() == 0){
 		ssize_t bytesLeidos = canalGenJde.leer ( static_cast <void*>( buffer ) , TAM_BUFFER );
-		std :: string mensaje = buffer;
-		mensaje.resize(bytesLeidos);
-		Auto automovil(mensaje);
-		log.info(TAG, "Recibi: " + automovil.serializar());
+		if(bytesLeidos > 0){
+			std :: string mensaje = buffer;
+			mensaje.resize(bytesLeidos);
+			Auto automovil(mensaje);
+			log.info(TAG, "Recibi: " + automovil.serializar());
 
-		//TODO: Verificar si hay empleado libre, en caso de que exista:
+			//TODO: Verificar si hay empleado libre, en caso de que exista:
 
-		std::string mensajeEnviar = automovil.serializar();
-		log.info(TAG, "Enviando auto: " + mensajeEnviar + " Largo: " + StringUtils::intToString(mensajeEnviar.length()));
-		canalJdeEmp.escribir( static_cast < const void*>( mensajeEnviar.c_str() ) , mensajeEnviar.length());
+			std::string mensajeEnviar = automovil.serializar();
+			log.info(TAG, "Enviando auto: " + mensajeEnviar + " Largo: " + StringUtils::intToString(mensajeEnviar.length()));
+			canalJdeEmp.escribir( static_cast < const void*>( mensajeEnviar.c_str() ) , mensajeEnviar.length());
+		}
 	}
 
 	try{
