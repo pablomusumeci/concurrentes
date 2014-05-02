@@ -21,6 +21,8 @@ int main(int argc, char* argv[]) {
 	std::string tag = "Generador de autos";
 	Properties properties;
 	std::string archivoFifo = properties.getProperty("fifo.generador.jde");
+	std::string espera = properties.getProperty("constante.tiempo.generador");
+	int tiempo = StringUtils::stringToInt(espera);
 	Logger log;
 	log.info(tag, "Arranca el generador");
 	AutoFactory factory;
@@ -33,7 +35,7 @@ int main(int argc, char* argv[]) {
 		log.info(tag, "Enviando auto: " + mensaje + " Largo: " + StringUtils::intToString(mensaje.length()));
 		canal.escribir( static_cast < const void*>( mensaje.c_str() ) , mensaje.length());
 		delete automovil;
-		sleep(2);
+		sleep(tiempo);
 	}
 
 	canal.cerrar();

@@ -53,9 +53,9 @@ int main(int argc, char* argv[]){
 
 	log.info(tag, "Comienzo del proceso empleado");
 	while( sigint_handler.getGracefulQuit() == 0){
-		log.info(tag, "Libre");
+//		log.info(tag, "Libre");
 		semaforoFifoJdeEmp.p();
-		log.info(tag, "Espera un auto en el fifo");
+//		log.info(tag, "Espera un auto en el fifo");
 		ssize_t bytesLeidos = canalJdeEmp.leer ( static_cast <void*>( buffer ) , TAM_BUFFER);
 		if(bytesLeidos >0){
 			std :: string mensajeRecibido = buffer;
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]){
 			log.info(tag, "Recibi: " + automovil.serializar());
 		}
 		semaforoFifoJdeEmp.v();
-		log.info(tag, "Libere semaforo ");
+//		log.info(tag, "Libere semaforo ");
 /*
 		int tiempoTrabajo = tiempoDeTrabajo(automovil);
 		log.info(tag, "Empleado espera por surtidor libre ");

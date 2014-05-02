@@ -42,6 +42,7 @@ int main(int argc, char* argv[]) {
 	std::string archivo = "";
 	std::string procesoJefeEstacion = "";
 	std::string procesoGenerador = "";
+	std::string procesoAdmin = "";
 	std::string archivoSemaforo = "";
 	std::string archivoEmpleado = "";
 	std::string archivoSemaforoJdeEmp = "";
@@ -52,6 +53,7 @@ int main(int argc, char* argv[]) {
 		archivo = properties.getProperty("process.commonFile");
 		procesoJefeEstacion = properties.getProperty("process.jefeEstacion");
 		procesoGenerador = properties.getProperty("process.generadorAutos");
+		procesoAdmin = properties.getProperty("process.administrador");
 		archivoSemaforo = properties.getProperty("semaforo.surtidores");
 		archivoEmpleado = properties.getProperty("process.empleado");
 		archivoSemaforoJdeEmp = properties.getProperty("semaforo.jde.empleado");
@@ -86,6 +88,9 @@ int main(int argc, char* argv[]) {
 		log.info(TAG, "Levanto generador de autos");
 		Proceso Generador(procesoGenerador);
 
+		log.info(TAG, "Levanto administrador");
+		Proceso Admin(procesoAdmin);
+
 		/**
 		 * Descomentar para usar la caja en los empleados
 		 */
@@ -115,6 +120,8 @@ int main(int argc, char* argv[]) {
 		}
 		Generador.interrupt();
 		JefeEstacion.interrupt();
+		Admin.interrupt();
+
 		destruirCajaYListaDeEmpleados(caja, arrayEmpleados);
 		semaforoSurtidor.eliminar();
 
