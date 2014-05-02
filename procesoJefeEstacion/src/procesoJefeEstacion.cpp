@@ -15,7 +15,7 @@ using namespace std;
 #include <Modelo/Auto.h>
 #include <Modelo/Empleados.h>
 #define TAG "Jefe de Estacion"
-#define TAM_BUFFER 18
+#define TAM_BUFFER 19
 int calcularRandom();
 
 int main() {

@@ -9,6 +9,7 @@
 #include <fstream>
 #include <string.h>
 #include <stdlib.h>
+#include "../StringUtils.h"
 #include "../Logger/PropertiesNotFoundException.h"
 
 Properties::Properties() {
@@ -23,12 +24,8 @@ Properties::Properties() {
 		if (linea.empty()){
 			continue;
 		}
-		char* copia = strdup(linea.c_str());
-		char* aux;
-		char* clave = strtok_r(copia, "=", &aux);
-		char* valor = strtok_r(NULL, "=", &aux);
-		this->properties[std::string(clave)] = std::string(valor);
-		free(copia);
+		std::vector<std::string> tokens = StringUtils::split(linea, '=');
+		this->properties[tokens[0]] = tokens[1];
 	}
 }
 

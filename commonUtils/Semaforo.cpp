@@ -11,7 +11,7 @@ Semaforo::~Semaforo() {
 }
 
 int Semaforo::getProcesosEsperando(){
-	return semctl ( this->id , 0 , GETVAL , 0) ;
+	return semctl ( this->id , 0 , GETVAL) ;
 }
 
 int Semaforo::inicializar (int valorInicial) {

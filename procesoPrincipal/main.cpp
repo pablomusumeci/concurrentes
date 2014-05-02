@@ -62,16 +62,13 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	/* Descomentar para leer opciones por parametro
+	/* Descomentar para leer opciones por parametro */
 	GetOpt options(argc,argv);
 	options.parse();
 	int CantSurtidores = options.getSurtidores();
 	int CantEmpleados = options.getEmpleados();
-	*/
 
-	//TODO: Borrar para la entrega
-	int CantSurtidores = 2;
-	int CantEmpleados = 3;
+
 
 	/**
 	 * Variables compartidas entre los procesos.

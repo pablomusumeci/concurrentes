@@ -44,5 +44,4 @@ void Caja::inicializar(int montoInicial) {
 
 void Caja::eliminarRecursos() {
 	semaforo.eliminar();
-//	memoria.liberar();
 }

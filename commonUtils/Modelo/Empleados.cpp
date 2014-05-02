@@ -49,7 +49,6 @@ void Empleados::inicializar(int cantidad) {
 
 void Empleados::eliminarRecursos() {
 	semaforo.eliminar();
-//	memoria.liberar();
 }
 
 void Empleados::tomarEmpleado() {
