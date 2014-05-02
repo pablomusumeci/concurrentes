@@ -11,7 +11,7 @@
 
 using namespace std;
 
-#define TAG "Proceso Administrador"
+#define TAG "Administrador"
 
 int main() {
 	Logger log;
@@ -24,7 +24,7 @@ int main() {
 	Caja caja;
 	while (sigint_handler.getGracefulQuit() == 0){
 		int valor = caja.consultar();
-		log.info(TAG, "El valor de la caja es: $"+ StringUtils::intToString(valor));
+		log.info(TAG, "Caja $"+ StringUtils::intToString(valor));
 		sleep(tiempo);
 	}
 

@@ -61,7 +61,10 @@ int main(int argc, char* argv[]){
 			std :: string mensajeRecibido = buffer;
 			mensajeRecibido.resize(bytesLeidos);
 			Auto automovil(mensajeRecibido);
+			int dineroAuto = automovil.getDinero();
 			log.info(tag, "Recibi: " + automovil.serializar());
+			int montoTotal = depositarEnCaja(dineroAuto);
+			log.info(tag, "Deposito $" +  StringUtils::intToString(dineroAuto) + " - Saldo Nuevo $" + StringUtils::intToString(montoTotal));
 		}
 		semaforoFifoJdeEmp.v();
 //		log.info(tag, "Libere semaforo ");
@@ -72,11 +75,10 @@ int main(int argc, char* argv[]){
 		log.info(tag, "Empleado trabajando " + tiempoTrabajo);
 		sleep(timeWorking);
 		semaforoSurtidor.v();
-		log.info(tag, "Empleado termino de trabajar, libera surtidor");
+		log.info(tag, "Empleado termino de trabajar, libera surtidor");*/
 		//TODO: empleado deposita en la caja
-		int montoTotal = depositarEnCaja(10);
-		log.info(tag, "Empleado deposito en caja, ahora hay " + StringUtils::intToString(montoTotal));
-*/
+		//int montoTotal = depositarEnCaja(dineroAuto);
+		//log.info(tag, "Deposito $" +  StringUtils::intToString(dineroAuto) + " - Saldo Nuevo $" + StringUtils::intToString(montoTotal));
 	}
 
 	log.info(tag, "Proceso empleado finalizado");

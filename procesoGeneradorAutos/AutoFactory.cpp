@@ -21,6 +21,6 @@ Auto* AutoFactory::generar(){
 
 int AutoFactory::generarRandom(){
 	srand(time(NULL));
-	int resultado = rand() % 999 + 1;
+	int resultado = rand() % 299 + 1;
 	return resultado;
 }
