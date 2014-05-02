@@ -10,6 +10,10 @@ Semaforo::Semaforo(std::string nombre , char caracter ) {
 Semaforo::~Semaforo() {
 }
 
+int Semaforo::getProcesosEsperando(){
+	return semctl ( this->id , 0 , GETVAL , 0) ;
+}
+
 int Semaforo::inicializar (int valorInicial) {
 	this->valorInicial = valorInicial;
 	union semnum {

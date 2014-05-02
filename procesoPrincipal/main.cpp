@@ -83,21 +83,24 @@ int main(int argc, char* argv[]) {
 		log.info(TAG, "Comienzo de ejecucion");
 
 		log.info(TAG, "Levanto jefe de estacion");
-		Proceso JefeEstacion(procesoJefeEstacion);
+		Proceso* JefeEstacion= new Proceso(procesoJefeEstacion);
 
 		log.info(TAG, "Levanto generador de autos");
-		Proceso Generador(procesoGenerador);
+		Proceso* Generador = new Proceso(procesoGenerador);
 
 		log.info(TAG, "Levanto administrador");
-		Proceso Admin(procesoAdmin);
+		Proceso* Admin = new Proceso(procesoAdmin);
 
 		/**
 		 * Descomentar para usar la caja en los empleados
 		 */
 		inicializarCajaYListaDeEmpleados(CantEmpleados, caja, arrayEmpleados);
 
+		// Controla acceso de empleados a surtidores
 		Semaforo semaforoSurtidor(archivoSemaforo,'s');
 		semaforoSurtidor.inicializar(CantSurtidores);
+
+		// Controla acceso de empleados al fifo con el JDE
 		Semaforo semaforoJdeEmpleados(archivoSemaforoJdeEmp,'s');
 		semaforoJdeEmpleados.inicializar(1);
 
@@ -117,15 +120,22 @@ int main(int argc, char* argv[]) {
 		for (std::vector<Proceso*>::iterator it = empleados.begin() ; it != empleados.end(); ++it){
 			log.info(TAG, "Cerrando empleado ID: " + StringUtils::intToString((int)(*it)->getId()));
 			(*it)->interrupt();
+			delete *it;
 		}
-		Generador.interrupt();
-		JefeEstacion.interrupt();
-		Admin.interrupt();
+		Generador->interrupt();
+		delete Generador;
+		JefeEstacion->interrupt();
+		delete JefeEstacion;
+		Admin->interrupt();
+		delete Admin;
 
+		log.debug(TAG, "Cuenta del semaforo semaforoSurtidor " + StringUtils::intToString(semaforoSurtidor.getProcesosEsperando()));
+		log.debug(TAG, "Cuenta del semaforo semaforoJdeEmpleados " + StringUtils::intToString(semaforoJdeEmpleados.getProcesosEsperando()));
 		destruirCajaYListaDeEmpleados(caja, arrayEmpleados);
 		semaforoSurtidor.eliminar();
+		semaforoJdeEmpleados.eliminar();
 
-	}catch(char* e){
+	}catch(char const* e){
 		log.error(TAG, e);
 		std::cout << e << std::endl;
 	}catch(std::string& e){

@@ -20,6 +20,7 @@ class Semaforo {
 		virtual ~ Semaforo () ;
 		int p () ; // decrementa
 		int v () ; //incrementa
+		int getProcesosEsperando();
 		void eliminar () ;
 
 };

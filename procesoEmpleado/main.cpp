@@ -30,8 +30,8 @@ int depositarEnCaja(int monto){
  * en base a la cantidad de dinero que tiene el auto
  * con el cual va a estar ocupado.
  */
-int tiempoDeTrabajo(Auto& at){
-	return (at.getDinero() % 10) + 2;
+int tiempoDeTrabajo(Auto& at, int base){
+	return (at.getDinero() % base) + 1;
 }
 
 int main(int argc, char* argv[]){
@@ -43,7 +43,8 @@ int main(int argc, char* argv[]){
 	std::string archivoFifoJdeEmp = properties.getProperty("fifo.jde.empleado");
 	std::string archivoSemaforoJdeEmp = properties.getProperty("semaforo.jde.empleado");
 	std::string archivoSemaforoSurtidores = properties.getProperty("semaforo.surtidores");
-
+	std::string base = properties.getProperty("constante.tiempo.empleado");
+	int tiempoBase = StringUtils::stringToInt(base);
 	FifoLectura canalJdeEmp(archivoFifoJdeEmp);
 	Semaforo semaforoFifoJdeEmp(archivoSemaforoJdeEmp, 's');
 	Semaforo semaforoSurtidor(archivoSemaforoSurtidores, 's');
@@ -53,32 +54,34 @@ int main(int argc, char* argv[]){
 
 	log.info(tag, "Comienzo del proceso empleado");
 	while( sigint_handler.getGracefulQuit() == 0){
-//		log.info(tag, "Libre");
 		semaforoFifoJdeEmp.p();
-//		log.info(tag, "Espera un auto en el fifo");
 		ssize_t bytesLeidos = canalJdeEmp.leer ( static_cast <void*>( buffer ) , TAM_BUFFER);
-		if(bytesLeidos >0){
+		semaforoFifoJdeEmp.v();
+		if(bytesLeidos > 0){
 			std :: string mensajeRecibido = buffer;
 			mensajeRecibido.resize(bytesLeidos);
 			Auto automovil(mensajeRecibido);
-			int dineroAuto = automovil.getDinero();
+
 			log.info(tag, "Recibi: " + automovil.serializar());
+			int tiempoTrabajo = tiempoDeTrabajo(automovil, tiempoBase);
+
+			// Espero al surtidor
+			semaforoSurtidor.p();
+			log.info(tag, "Empleado trabajando " + StringUtils::intToString(tiempoTrabajo));
+			sleep(tiempoTrabajo);
+			semaforoSurtidor.v();
+
+			// Deposito en la caja
+			int dineroAuto = automovil.getDinero();
 			int montoTotal = depositarEnCaja(dineroAuto);
 			log.info(tag, "Deposito $" +  StringUtils::intToString(dineroAuto) + " - Saldo Nuevo $" + StringUtils::intToString(montoTotal));
 		}
-		semaforoFifoJdeEmp.v();
-//		log.info(tag, "Libere semaforo ");
-/*
-		int tiempoTrabajo = tiempoDeTrabajo(automovil);
-		log.info(tag, "Empleado espera por surtidor libre ");
-		semaforoSurtidor.p();
-		log.info(tag, "Empleado trabajando " + tiempoTrabajo);
-		sleep(timeWorking);
-		semaforoSurtidor.v();
-		log.info(tag, "Empleado termino de trabajar, libera surtidor");*/
-		//TODO: empleado deposita en la caja
-		//int montoTotal = depositarEnCaja(dineroAuto);
-		//log.info(tag, "Deposito $" +  StringUtils::intToString(dineroAuto) + " - Saldo Nuevo $" + StringUtils::intToString(montoTotal));
+	}
+
+	try{
+		canalJdeEmp.cerrar();
+	} catch (...){
+		log.error(tag, "Error cerrando fifo entre JDE y Empleado.");
 	}
 
 	log.info(tag, "Proceso empleado finalizado");
