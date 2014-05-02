@@ -47,11 +47,15 @@ int main() {
 			Auto automovil(mensaje);
 			log.info(TAG, "Recibi: " + automovil.serializar());
 
-			//TODO: Verificar si hay empleado libre, en caso de que exista:
 
-			std::string mensajeEnviar = automovil.serializar();
-			log.info(TAG, "Enviando auto: " + mensajeEnviar + " Largo: " + StringUtils::intToString(mensajeEnviar.length()));
-			canalJdeEmp.escribir( static_cast < const void*>( mensajeEnviar.c_str() ) , mensajeEnviar.length());
+			if (empleados.hayEmpleadoLibre()){
+				std::string mensajeEnviar = automovil.serializar();
+				log.info(TAG, "Enviando auto: " + mensajeEnviar + " Largo: " + StringUtils::intToString(mensajeEnviar.length()));
+				canalJdeEmp.escribir( static_cast < const void*>( mensajeEnviar.c_str() ) , mensajeEnviar.length());
+			} else {
+				// Rechazar el auto
+				log.info(TAG, "Se rechaza el auto con id " + StringUtils::intToString(automovil.getID()) + " por falta de empleados libres");
+			}
 		}
 	}
 

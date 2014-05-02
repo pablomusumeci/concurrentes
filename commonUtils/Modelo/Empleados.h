@@ -29,11 +29,18 @@ public:
 	 */
 	bool hayEmpleadoLibre();
 	/**
-	 * Devuelve al empleado, es decir, lo marca como libre segun el ID.
-	 * Es bloqueante por el semaforo de acceso, es decir, cuando toma el control
-	 * marca el empleado com libre, aunque el otro semaforo este en 0.
+	 * Devuelve al empleado, aumentando en una unidad la cantidad de empleados libres.
 	 */
 	void devolverEmpleado();
+
+	/**
+	 * Toma un empleado libre, decrementando la cantidad de libres.
+	 */
+	void tomarEmpleado();
+
+	/**
+	 * Elimina los recursos de IPC utilizados
+	 */
 	void eliminarRecursos();
 	virtual ~Empleados();
 private:

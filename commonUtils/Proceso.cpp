@@ -1,4 +1,8 @@
 #include "Proceso.h"
+#include "Logger/Logger.h"
+#include <unistd.h>
+#include <sys/types.h>
+#include "StringUtils.h"
 
 Proceso::Proceso(std::string fileName): file(fileName),id(0),status(0) {
 	start();
@@ -39,7 +43,10 @@ void Proceso::waitProcess() {
 		if (waitpid(id, &status, 0) == -1) {
 			throw("process error, could not wait for child process");
 		}
-	} else throw("process error, process not running");
+	} else {
+		Logger log;
+		log.error("Proceso", "process error, process not running, PID: "+ StringUtils::intToString(getpid()));
+	}
 }
 
 void Proceso::killProcess() {

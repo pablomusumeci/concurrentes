@@ -51,3 +51,12 @@ void Empleados::eliminarRecursos() {
 	semaforo.eliminar();
 //	memoria.liberar();
 }
+
+void Empleados::tomarEmpleado() {
+	semaforo.p();
+	int empleados = memoria.leer();
+	empleados--;
+	memoria.escribir(empleados);
+	// Libero el semaforo binario de control de acceso
+	semaforo.v();
+}

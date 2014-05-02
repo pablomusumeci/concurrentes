@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <Modelo/Caja.h>
+#include <Modelo/Empleados.h>
 #include <Fifo/FifoLectura.h>
 #include <Seniales/SignalHandler.h>
 #include <Seniales/SIGINT_Handler.h>
@@ -51,6 +52,7 @@ int main(int argc, char* argv[]){
 	char buffer [ TAM_BUFFER ];
 	memset(buffer, '\0', TAM_BUFFER);
 	canalJdeEmp.abrir();
+	Empleados empleados;
 
 	log.info(tag, "Comienzo del proceso empleado");
 	while( sigint_handler.getGracefulQuit() == 0){
@@ -58,6 +60,8 @@ int main(int argc, char* argv[]){
 		ssize_t bytesLeidos = canalJdeEmp.leer ( static_cast <void*>( buffer ) , TAM_BUFFER);
 		semaforoFifoJdeEmp.v();
 		if(bytesLeidos > 0){
+			// Se decrementa la cantidad de empleados libres
+			empleados.tomarEmpleado();
 			std :: string mensajeRecibido = buffer;
 			mensajeRecibido.resize(bytesLeidos);
 			Auto automovil(mensajeRecibido);
@@ -75,6 +79,8 @@ int main(int argc, char* argv[]){
 			int dineroAuto = automovil.getDinero();
 			int montoTotal = depositarEnCaja(dineroAuto);
 			log.info(tag, "Deposito $" +  StringUtils::intToString(dineroAuto) + " - Saldo Nuevo $" + StringUtils::intToString(montoTotal));
+			// El empleado se vuelve a marcar como libre
+			empleados.devolverEmpleado();
 		}
 	}
 
