@@ -27,7 +27,7 @@ int main() {
 		log.info(TAG, "Caja $"+ StringUtils::intToString(valor));
 		sleep(tiempo);
 	}
-
+	SignalHandler::getInstance()->destruir();
 	log.info(TAG, "Ejecucion finalizada");
 	return 0;
 

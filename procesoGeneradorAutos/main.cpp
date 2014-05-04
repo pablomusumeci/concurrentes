@@ -16,32 +16,33 @@
 
 int main(int argc, char* argv[]) {
 	try {
-	SIGINT_Handler sigint_handler;
-	SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
-	std::string tag = "Generador de autos";
-	Properties properties;
-	std::string archivoFifo = properties.getProperty("fifo.generador.jde");
-	std::string espera = properties.getProperty("constante.tiempo.generador");
-	int tiempo = StringUtils::stringToInt(espera);
-	Logger log;
-	log.info(tag, "Arranca el generador");
-	AutoFactory factory;
-	FifoEscritura canal(archivoFifo);
-	canal.abrir() ;
+		SIGINT_Handler sigint_handler;
+		SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
+		std::string tag = "Generador de autos";
+		Properties properties;
+		std::string archivoFifo = properties.getProperty("fifo.generador.jde");
+		std::string espera = properties.getProperty("constante.tiempo.generador");
+		int tiempo = StringUtils::stringToInt(espera);
+		Logger log;
+		log.info(tag, "Arranca el generador");
+		AutoFactory factory;
+		FifoEscritura canal(archivoFifo);
+		canal.abrir() ;
 
-	while( sigint_handler.getGracefulQuit() == 0){
-		Auto* automovil = factory.generar();
-		std::string mensaje = automovil->serializar();
-		log.info(tag, "Enviando auto: " + mensaje + " Largo: " + StringUtils::intToString(mensaje.length()));
-		canal.escribir( static_cast < const void*>( mensaje.c_str() ) , mensaje.length());
-		delete automovil;
-		sleep(tiempo);
-	}
+		while( sigint_handler.getGracefulQuit() == 0){
+			Auto* automovil = factory.generar();
+			std::string mensaje = automovil->serializar();
+			log.info(tag, "Enviando auto: " + mensaje + " Largo: " + StringUtils::intToString(mensaje.length()));
+			canal.escribir( static_cast < const void*>( mensaje.c_str() ) , mensaje.length());
+			delete automovil;
+			sleep(tiempo);
+		}
 
-	canal.cerrar();
-	canal.eliminar();
-	log.info(tag, "Ejecucion finalizada.");
-	return 0;
+		canal.cerrar();
+		canal.eliminar();
+		SignalHandler::getInstance()->destruir();
+		log.info(tag, "Ejecucion finalizada.");
+		return 0;
 	} catch (char const* e) {
 		std::cout << "Error " << e << std::endl;
 	}

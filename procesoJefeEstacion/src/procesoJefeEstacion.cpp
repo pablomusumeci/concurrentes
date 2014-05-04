@@ -62,6 +62,7 @@ int main() {
 	try{
 		canalGenJde.cerrar();
 		canalJdeEmp.cerrar();
+		SignalHandler::getInstance()->destruir();
 	} catch (std::string& e){
 		log.error(TAG,e);
 	}

@@ -86,6 +86,7 @@ int main(int argc, char* argv[]){
 
 	try{
 		canalJdeEmp.cerrar();
+		SignalHandler::getInstance()->destruir();
 	} catch (...){
 		log.error(tag, "Error cerrando fifo entre JDE y Empleado.");
 	}
