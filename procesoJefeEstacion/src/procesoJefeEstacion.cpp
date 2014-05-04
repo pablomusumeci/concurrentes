@@ -68,7 +68,7 @@ int main() {
 	}
 
 	log.info(TAG, "Fin de la lectura");
-	exit(0);
+	return 0;
 
 }
 
