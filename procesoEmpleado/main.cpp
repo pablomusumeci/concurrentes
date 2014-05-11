@@ -56,31 +56,46 @@ int main(int argc, char* argv[]){
 
 	log.info(tag, "Comienzo del proceso empleado");
 	while( sigint_handler.getGracefulQuit() == 0){
-		semaforoFifoJdeEmp.p();
-		ssize_t bytesLeidos = canalJdeEmp.leer ( static_cast <void*>( buffer ) , TAM_BUFFER);
-		semaforoFifoJdeEmp.v();
-		if(bytesLeidos > 0){
-			// Se decrementa la cantidad de empleados libres
-			empleados.tomarEmpleado();
-			std :: string mensajeRecibido = buffer;
-			mensajeRecibido.resize(bytesLeidos);
-			Auto automovil(mensajeRecibido);
+		int resultadoJde = semaforoFifoJdeEmp.p();
+		if(resultadoJde != -1){
+			ssize_t bytesLeidos = canalJdeEmp.leer ( static_cast <void*>( buffer ) , TAM_BUFFER);
+			semaforoFifoJdeEmp.v();
+			if(bytesLeidos > 0){
+				// Se decrementa la cantidad de empleados libres
+				empleados.tomarEmpleado();
+				std :: string mensajeRecibido = buffer;
+				mensajeRecibido.resize(bytesLeidos);
+				Auto automovil(mensajeRecibido);
 
-			log.info(tag, "Recibi: " + automovil.serializar());
-			int tiempoTrabajo = tiempoDeTrabajo(automovil, tiempoBase);
+				log.info(tag, "Recibi: " + automovil.serializar());
+				int tiempoTrabajo = tiempoDeTrabajo(automovil, tiempoBase);
 
-			// Espero al surtidor
-			semaforoSurtidor.p();
-			log.info(tag, "Empleado trabajando " + StringUtils::intToString(tiempoTrabajo));
-			sleep(tiempoTrabajo);
-			semaforoSurtidor.v();
-
-			// Deposito en la caja
-			int dineroAuto = automovil.getDinero();
-			int montoTotal = depositarEnCaja(dineroAuto);
-			log.info(tag, "Deposito $" +  StringUtils::intToString(dineroAuto) + " - Saldo Nuevo $" + StringUtils::intToString(montoTotal));
-			// El empleado se vuelve a marcar como libre
-			empleados.devolverEmpleado();
+				// Espero al surtidor
+				int resultado = semaforoSurtidor.p();
+				if(resultado != -1){
+					log.info(tag, "Empleado trabajando " + StringUtils::intToString(tiempoTrabajo));
+					int tiempoRestante = 0;
+					tiempoRestante = sleep(tiempoTrabajo);
+					sleep(tiempoRestante);
+					semaforoSurtidor.v();
+					// Deposito en la caja
+					int dineroAuto = automovil.getDinero();
+					int montoTotal = depositarEnCaja(dineroAuto);
+					log.info(tag, "Deposito $" +  StringUtils::intToString(dineroAuto) + " - Saldo Nuevo $" + StringUtils::intToString(montoTotal));
+					// El empleado se vuelve a marcar como libre
+					empleados.devolverEmpleado();
+				} else {
+					if (errno == EINTR)
+						log.debug(tag, "Recibi señal mientras esperaba el surtidor.");
+					else
+						log.error(tag, "Error pidiendo surtidores.");
+				}
+			} else {
+				if (errno == EINTR)
+					log.debug(tag, "Recibi señal mientras esperaba el fifo.");
+				else
+					log.error(tag, "Error pidiendo auto.");
+			}
 		}
 	}
 

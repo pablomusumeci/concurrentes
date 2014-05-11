@@ -15,7 +15,21 @@
 \input{./title.tex}
 \newpage
 \tableofcontents
+
+\section{Hipótesis}
+
+\begin{itemize}
+	\item Consideramos que cuando un auto es enviado a la salida por el Jefe de Estación,
+	el mismo sale del sistema de manera instantánea, sin tener que hacer una cola
+	para salir de la estación.
+
+	\item El administrador no tiene prioridad sobre los empleados al momento de consultar
+	el saldo en la caja, y debido a esto, cuando desea hacerlo debe aguardar su turno para
+	trabajar de manera exclusiva con la caja, al igual que cualquier empleado.
+\end{itemize}
+
 \newpage
+
 \section{Diseño}
 	\subsection{Proceso Principal}
 
@@ -78,17 +92,6 @@
 	
 	El proceso administrador tiene la facultad de consultar el valor guardado en la caja. Puede hacerlo en cualquier momento, y su consulta sobre la caja esta controlada de la misma forma que el empleado. La diferencia con el empleado es que el Administrador no espera a un auto, sino que puede consultar en cualquier momento. En nuestra implementación, 
 	el administrador consulta la caja de manera periódica, siendo configurable el período de espera entre cada consulta.
-\section{Hipótesis}
-
-\begin{itemize}
-	\item Consideramos que cuando un auto es enviado a la salida por el Jefe de Estación,
-	el mismo sale del sistema de manera instantánea, sin tener que hacer una cola
-	para salir de la estación.
-
-	\item El administrador no tiene prioridad sobre los empleados al momento de consultar
-	el saldo en la caja, y debido a esto, cuando desea hacerlo debe aguardar su turno para
-	trabajar de manera exclusiva con la caja, al igual que cualquier empleado.
-\end{itemize}
 
 \subsection{Casos de uso}
 
