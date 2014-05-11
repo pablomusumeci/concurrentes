@@ -88,9 +88,6 @@ int main(int argc, char* argv[]) {
 		log.info(TAG, "Levanto administrador");
 		Proceso* Admin = new Proceso(procesoAdmin);
 
-		/**
-		 * Descomentar para usar la caja en los empleados
-		 */
 		inicializarCajaYListaDeEmpleados(CantEmpleados, caja, arrayEmpleados);
 
 		// Controla acceso de empleados a surtidores
@@ -109,7 +106,7 @@ int main(int argc, char* argv[]) {
 			empleados.push_back(empleado);
 		}
 		/**
-		 * Limpieza de los semaforos y MC de la caja y el vector de empleados
+		 * Limpieza de los semaforos y MC de la caja y el contador de empleados
 		 */
 		std::cout << "Para terminar, ingresar un caracter: " ;
 		getchar();

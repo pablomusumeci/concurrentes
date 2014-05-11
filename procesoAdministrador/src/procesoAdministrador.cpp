@@ -22,15 +22,21 @@ int main() {
 	SIGINT_Handler sigint_handler;
 	SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
 	Caja caja;
-	while (sigint_handler.getGracefulQuit() == 0){
-		int valor = caja.consultar();
-		log.info(TAG, "Caja $"+ StringUtils::intToString(valor));
+	while (sigint_handler.getGracefulQuit() == 0) {
 		sleep(tiempo);
+		int valor = caja.consultar();
+		if (valor >= 0) {
+			log.info(TAG, "Caja $" + StringUtils::intToString(valor));
+		} else {
+			if (errno == EINTR){
+				log.info(TAG, "Recibi señal durante la consulta");
+			} else {
+				log.error(TAG, "Error en la consulta");
+			}
+		}
 	}
 	SignalHandler::getInstance()->destruir();
 	log.info(TAG, "Ejecucion finalizada");
 	return 0;
-
-
 }
 

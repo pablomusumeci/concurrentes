@@ -18,6 +18,7 @@ void FifoEscritura::abrir() {
 	Logger log;
 	fd = open ( nombre.c_str(),O_WRONLY );
 	if (fd == -1){
+		printf ("PID : %d\n", getpid());
 		printf ("Error no is : %d\n", errno);
         printf("Error description is : %s\n",strerror(errno));
         log.error(TAG, "Error abriendo Fifo de Escritura:" + std::string(strerror(errno)));

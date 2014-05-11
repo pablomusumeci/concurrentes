@@ -22,16 +22,21 @@ Caja::Caja():semaforo('A') {
 Caja::~Caja() {
 }
 
-
 void Caja::depositar(int cobro){
-	semaforo.p();
+	int ret = semaforo.p();
+	if (ret == -1 ){
+		return;
+	}
 	int monto = memoria.leer();
 	memoria.escribir(monto + cobro);
 	semaforo.v();
 }
 
 int Caja::consultar(){
-	semaforo.p();
+	int ret = semaforo.p();
+	if (ret == -1){
+		return -1;
+	}
 	int monto = memoria.leer();
 	semaforo.v();
 	return monto;

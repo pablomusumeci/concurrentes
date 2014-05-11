@@ -31,6 +31,8 @@ public:
 	void depositar(int monto);
 	/**
 	 * Devuelve el valor actual de la caja. Tambien es bloqueante.
+	 * Si se interrumpe al proceso mientras esperaba en la caja,
+	 * devuelve -1
 	 */
 	int consultar();
 	void eliminarRecursos();
