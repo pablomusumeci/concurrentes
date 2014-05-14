@@ -29,7 +29,7 @@ int main() {
 			log.info(TAG, "Caja $" + StringUtils::intToString(valor));
 		} else {
 			if (errno == EINTR){
-				log.info(TAG, "Recibi señal durante la consulta");
+				log.debug(TAG, "Recibi señal durante la consulta");
 			} else {
 				log.error(TAG, "Error en la consulta");
 			}

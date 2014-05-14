@@ -38,9 +38,7 @@ int main() {
 	try {
 		memset(buffer, '\0', TAM_BUFFER);
 		canalGenJde.abrir();
-		log.info(TAG, "Abierto el canal genJDE");
 		canalJdeEmp.abrir();
-		log.info(TAG, "Abierto el canal JdeEmp");
 
 		// Grupo de empleados
 		Empleados empleados;
@@ -52,20 +50,18 @@ int main() {
 				std::string mensaje = buffer;
 				mensaje.resize(bytesLeidos);
 				Auto automovil(mensaje);
-				log.info(TAG, "Recibi: " + automovil.serializar());
+				log.debug(TAG, "Recibi: " + automovil.serializar());
 
 				if (empleados.hayEmpleadoLibre()) {
 					std::string mensajeEnviar = automovil.serializar();
-					log.info(TAG,
-							"Enviando auto: " + mensajeEnviar + " Largo: "
-									+ StringUtils::intToString(
-											mensajeEnviar.length()));
+					log.debug(TAG,
+							"Enviando auto: " + mensajeEnviar);
 					canalJdeEmp.escribir(
 							static_cast<const void*>(mensajeEnviar.c_str()),
 							mensajeEnviar.length());
 				} else {
 					// Rechazar el auto
-					log.info(TAG,
+					log.debug(TAG,
 							"Se rechaza el auto con id "
 									+ StringUtils::intToString(
 											automovil.getID())

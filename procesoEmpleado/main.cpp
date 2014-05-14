@@ -67,13 +67,13 @@ int main(int argc, char* argv[]){
 				mensajeRecibido.resize(bytesLeidos);
 				Auto automovil(mensajeRecibido);
 
-				log.info(tag, "Recibi: " + automovil.serializar());
+				log.debug(tag, "Recibi: " + automovil.serializar());
 				int tiempoTrabajo = tiempoDeTrabajo(automovil, tiempoBase);
 
 				// Espero al surtidor
 				int resultado = semaforoSurtidor.p();
 				if(resultado != -1){
-					log.info(tag, "Empleado trabajando " + StringUtils::intToString(tiempoTrabajo));
+					log.debug(tag, "Empleado trabajando " + StringUtils::intToString(tiempoTrabajo));
 					int tiempoRestante = 0;
 					tiempoRestante = sleep(tiempoTrabajo);
 					sleep(tiempoRestante);
@@ -81,7 +81,7 @@ int main(int argc, char* argv[]){
 					// Deposito en la caja
 					int dineroAuto = automovil.getDinero();
 					int montoTotal = depositarEnCaja(dineroAuto);
-					log.info(tag, "Deposito $" +  StringUtils::intToString(dineroAuto) + " - Saldo Nuevo $" + StringUtils::intToString(montoTotal));
+					log.debug(tag, "Deposito $" +  StringUtils::intToString(dineroAuto) + " - Saldo Nuevo $" + StringUtils::intToString(montoTotal));
 					// El empleado se vuelve a marcar como libre
 					empleados.devolverEmpleado();
 				} else {

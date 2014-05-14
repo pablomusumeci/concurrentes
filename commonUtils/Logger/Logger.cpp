@@ -5,7 +5,7 @@
 #include "../Lock/LockFile.h"
 #include "../Properties/Properties.h"
 #include "PropertiesNotFoundException.h"
-
+#include "../StringUtils.h"
 void Logger::warn(const string& tag, const string& msg) {
 	if ((nivelDeLog & LOG_WARN) == 0)
 		return;
@@ -101,9 +101,11 @@ void Logger::setLogLevel(int nivelLog) {
 }
 
 Logger::Logger() {
-	nivelDeLog = NIVEL_GLOBAL;
+	//nivelDeLog = NIVEL_GLOBAL;
 	Properties properties;
 	logFileName = properties.getProperty("file.log.location");
+	std::string propertieLog = properties.getProperty("constante.nivel.log");
+	nivelDeLog = StringUtils::stringToInt(propertieLog);
 	archivoLog.open(logFileName.c_str(),  std::ios::app);
 }
 
