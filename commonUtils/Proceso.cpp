@@ -16,11 +16,11 @@ void Proceso::start(){
 	int pid = fork();
 	if (pid == 0) {
 		int retValue = execl(file.c_str(), file.c_str(), NULL);
-		if(retValue == -1) throw("process error, could not replace process image");
+		if(retValue == -1) throw("Error en el proceso. No se puede reemplazar la imagen del ejecutable.");
 	} else if(pid > 0) {
 		id = pid;
 	} else {
-		throw("process error, could not fork child process");
+		throw("Error en el proceso. No se puede forkear.");
 	}
 }
 
@@ -29,36 +29,36 @@ bool Proceso::isRunning() {
 }
 
 pid_t Proceso::getId(){
-	if(!isRunning()) throw("process not running");
+	if(!isRunning()) throw("El proceso no esta en ejecucion.");
 	return id;
 }
 
 int Proceso::getStatus(){
-	if(!isRunning()) throw("process not running");
+	if(!isRunning()) throw("El proceso no esta en ejecucion.");
 	return status;
 }
 
 void Proceso::waitProcess() {
 	if (isRunning()) {
 		if (waitpid(id, &status, 0) == -1) {
-			throw("process error, could not wait for child process");
+			throw("Error en el proceso, no se puede esperar al proceso hijo.");
 		}
 	} else {
 		Logger log;
-		log.error("Proceso", "process error, process not running, PID: "+ StringUtils::intToString(getpid()));
+		log.error("Proceso", "Error en el proceso. El proceso no se esta ejecutando. PID: "+ StringUtils::intToString(getpid()));
 	}
 }
 
 void Proceso::killProcess() {
-	if (!isRunning()) throw("process error, process not running");
-	if (kill(id, SIGKILL) == -1) throw("process error, could not kill process");
+	if (!isRunning()) throw("Error en el proceso. El proceso no se esta ejecutando.");
+	if (kill(id, SIGKILL) == -1) throw("Error en el proceso. No se puede matar al proceso.");
 	id = 0;
 	status = -1;
 }
 
 void Proceso::interrupt() {
-	if (!isRunning()) throw("process error, process not running");
-	if (kill(id, SIGINT) == -1) throw("process error, could not interrupt process");
+	if (!isRunning()) throw("Error en el proceso. El proceso no se esta ejecutando.");
+	if (kill(id, SIGINT) == -1) throw("Error en el proceso. No se puede interrumpir el proceso.");
 }
 
 Proceso::~Proceso() {
