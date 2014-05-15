@@ -18,6 +18,10 @@
 
 \section{Hipótesis}
 
+A continuación se presentan los supuestos que consideramos a la hora de desarollar el 
+trabajo práctico.
+
+
 \begin{itemize}
 	\item Consideramos que cuando un auto es enviado a la salida por el Jefe de Estación,
 	el mismo sale del sistema de manera instantánea, sin tener que hacer una cola
@@ -26,6 +30,10 @@
 	\item El administrador no tiene prioridad sobre los empleados al momento de consultar
 	el saldo en la caja, y debido a esto, cuando desea hacerlo debe aguardar su turno para
 	trabajar de manera exclusiva con la caja, al igual que cualquier empleado.
+
+	 \item Con la finalidad de que la simulación represente una situación real, la cantidad
+	 de surtidores y empleados que tiene la estación al momento de comenzar la misma debe ser 
+	 mayor a 0.
 \end{itemize}
 
 \newpage
@@ -128,6 +136,7 @@
 \caption{Diagrama esquemático de interacciones}
 \end{figure}
 
+\newpage
 	\section{Datos compartidos entre procesos}
 	
 	\begin{itemize}
@@ -174,6 +183,26 @@
 	\caption{FSM del Jefe de Estación}
 	\end{figure}
 
+	\newpage
+	\section{Diagramas de clases}
+	\subsection{Generador de automóviles y Jefe de estación}
+	\begin{figure}[h]
+	\includegraphics[scale=0.60, angle=90]{GeneradorJde.png}
+	\centering
+	\end{figure}
 
+	\newpage		
+	\subsection{Jefe de estación y empleado}
+	\begin{figure}[h]
+	\includegraphics[scale=0.50, angle=90]{JDE_Empleado.png}
+	\centering
+	\end{figure}
+
+	\newpage	
+	\subsection{Empleados, administrador y acceso a la caja}
+	\begin{figure}[h]
+	\includegraphics[scale=0.50, angle=90]{AccesoCaja.png}
+	\centering
+	\end{figure}
 
 \end{document}

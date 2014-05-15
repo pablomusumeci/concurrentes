@@ -101,7 +101,6 @@ void Logger::setLogLevel(int nivelLog) {
 }
 
 Logger::Logger() {
-	//nivelDeLog = NIVEL_GLOBAL;
 	Properties properties;
 	logFileName = properties.getProperty("file.log.location");
 	std::string propertieLog = properties.getProperty("constante.nivel.log");
