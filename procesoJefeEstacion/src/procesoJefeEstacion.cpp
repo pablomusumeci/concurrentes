@@ -48,7 +48,7 @@ int main() {
 
 		while (sigint_handler.getGracefulQuit() == 0) {
 			st_auto autoRecibido;
-			int resultado = cola.leer(- VIP, &autoRecibido);
+			int resultado = cola.leer(0, &autoRecibido);
 			Auto automovil(autoRecibido);
 			log.info(TAG, "Recibi: " + automovil.serializar());
 		}
