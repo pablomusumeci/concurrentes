@@ -7,9 +7,14 @@
 
 #include "Auto.h"
 
-Auto::Auto(int id, int dinero) {
+Auto::Auto(int id, int dinero, long mtype) {
 	this->id = id;
 	this->dinero = dinero;
+	this->mtype = mtype;
+}
+
+Auto::Auto(const st_auto& structAuto){
+	fromStruct(structAuto);
 }
 
 Auto::Auto(std::string cadena){
@@ -51,4 +56,22 @@ int Auto::getDinero(){
 
 int Auto::getID(){
 	return this->id;
+}
+
+int Auto::getPrioridad(){
+	return this->mtype;
+}
+
+st_auto Auto::getStruct(){
+	st_auto  newAuto;
+	newAuto.id = this->id;
+	newAuto.dinero = this->dinero;
+	newAuto.mtype = this->mtype;
+	return newAuto;
+}
+
+void Auto::fromStruct(const st_auto& receivedAuto){
+	this->id = receivedAuto.id;
+	this->dinero = receivedAuto.dinero;
+	this->mtype = receivedAuto.mtype;
 }
