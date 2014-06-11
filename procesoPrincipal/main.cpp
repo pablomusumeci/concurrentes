@@ -17,6 +17,8 @@
 #include <Semaforo.h>
 #include <GetOpt.h>
 #include <Proceso.h>
+#include <Cola.h>
+#include <Modelo/Auto.h>
 #include <Modelo/Caja.h>
 #include <Modelo/Empleados.h>
 
@@ -75,6 +77,7 @@ int main(int argc, char* argv[]) {
 	 */
 	Empleados arrayEmpleados;
 	Caja caja;
+	Cola<st_auto> colaGeneradorJde(archivoEmpleado,'c');
 
 	try{
 		log.info(TAG, "Comienzo de ejecucion");
@@ -128,6 +131,7 @@ int main(int argc, char* argv[]) {
 		destruirCajaYListaDeEmpleados(caja, arrayEmpleados);
 		semaforoSurtidor.eliminar();
 		semaforoJdeEmpleados.eliminar();
+		colaGeneradorJde.destruir();
 
 	}catch(char const* e){
 		log.error(TAG, e);

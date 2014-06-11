@@ -10,7 +10,7 @@
 
 #include "../Semaforo.h"
 #include "../MemoriaCompartida.h"
-
+#include "../Logger/Logger.h"
 /**
  * Clase que representa al conjunto de empleados. Guarda un entero en MC.
  * Usa un semaforo binario, identificado con el caracter 'B'.

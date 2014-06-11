@@ -14,6 +14,7 @@ using namespace std;
 #include <Fifo/FifoEscritura.h>
 #include <Modelo/Auto.h>
 #include <Modelo/Empleados.h>
+#include <Cola.h>
 
 #define TAG "Jefe de Estacion"
 #define TAM_BUFFER 19
@@ -28,12 +29,14 @@ int main() {
 	std::string archivo = properties.getProperty("process.commonFile");
 	std::string archivoFifoGenJde = properties.getProperty(
 			"fifo.generador.jde");
+	std::string archivoEmpleado = properties.getProperty("process.empleado");
 	std::string archivoFifoJdeEmp = properties.getProperty("fifo.jde.empleado");
 	SIGINT_Handler sigint_handler;
 	SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
 
 	FifoLectura canalGenJde(archivoFifoGenJde);
 	FifoEscritura canalJdeEmp(archivoFifoJdeEmp);
+	Cola<st_auto> cola(archivoEmpleado,'c');
 	char buffer[ TAM_BUFFER];
 	try {
 		memset(buffer, '\0', TAM_BUFFER);
@@ -44,31 +47,38 @@ int main() {
 		Empleados empleados;
 
 		while (sigint_handler.getGracefulQuit() == 0) {
-			ssize_t bytesLeidos = canalGenJde.leer(static_cast<void*>(buffer),
-			TAM_BUFFER);
-			if (bytesLeidos > 0) {
-				std::string mensaje = buffer;
-				mensaje.resize(bytesLeidos);
-				Auto automovil(mensaje);
-				log.debug(TAG, "Recibi: " + automovil.serializar());
-
-				if (empleados.hayEmpleadoLibre()) {
-					std::string mensajeEnviar = automovil.serializar();
-					log.debug(TAG,
-							"Enviando auto: " + mensajeEnviar);
-					canalJdeEmp.escribir(
-							static_cast<const void*>(mensajeEnviar.c_str()),
-							mensajeEnviar.length());
-				} else {
-					// Rechazar el auto
-					log.debug(TAG,
-							"Se rechaza el auto con id "
-									+ StringUtils::intToString(
-											automovil.getID())
-									+ " por falta de empleados libres");
-				}
-			}
+			st_auto autoRecibido;
+			int resultado = cola.leer(- VIP, &autoRecibido);
+			Auto automovil(autoRecibido);
+			log.info(TAG, "Recibi: " + automovil.serializar());
 		}
+
+		// while (sigint_handler.getGracefulQuit() == 0) {
+		// 	ssize_t bytesLeidos = canalGenJde.leer(static_cast<void*>(buffer),
+		// 	TAM_BUFFER);
+		// 	if (bytesLeidos > 0) {
+		// 		std::string mensaje = buffer;
+		// 		mensaje.resize(bytesLeidos);
+		// 		Auto automovil(mensaje);
+		// 		log.debug(TAG, "Recibi: " + automovil.serializar());
+
+		// 		if (empleados.hayEmpleadoLibre()) {
+		// 			std::string mensajeEnviar = automovil.serializar();
+		// 			log.debug(TAG,
+		// 					"Enviando auto: " + mensajeEnviar);
+		// 			canalJdeEmp.escribir(
+		// 					static_cast<const void*>(mensajeEnviar.c_str()),
+		// 					mensajeEnviar.length());
+		// 		} else {
+		// 			// Rechazar el auto
+		// 			log.debug(TAG,
+		// 					"Se rechaza el auto con id "
+		// 							+ StringUtils::intToString(
+		// 									automovil.getID())
+		// 							+ " por falta de empleados libres");
+		// 		}
+		// 	}
+		// }
 
 		canalGenJde.cerrar();
 		canalJdeEmp.cerrar();

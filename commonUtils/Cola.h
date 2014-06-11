@@ -44,7 +44,7 @@ template <class T> int Cola<T> :: escribir ( const T& dato ) const {
 }
 
 template <class T> int Cola<T> :: leer ( const int tipo,T* buffer ) const {
-	int resultado = msgrcv ( this->id,static_cast<void *>(buffer),sizeof(T)-sizeof(long),tipo, - 1 );
+	int resultado = msgrcv ( this->id,static_cast<void *>(buffer),sizeof(T)-sizeof(long), tipo, 0 );
 	return resultado;
 }
 

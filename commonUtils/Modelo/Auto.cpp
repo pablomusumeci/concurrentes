@@ -31,6 +31,9 @@ std::string Auto::serializar(){
 	resultado += SEPARADOR;
 	resultado += "Dinero:";
 	resultado += StringUtils::intToFixedString(this->dinero, 4);
+	resultado += SEPARADOR;
+	resultado += "Prioridad:";
+	resultado += StringUtils::intToFixedString(this->mtype,1);
 	return resultado;
 }
 

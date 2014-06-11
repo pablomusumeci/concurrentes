@@ -10,11 +10,13 @@
 #include "../Properties/Properties.h"
 
 Caja::Caja():semaforo('A') {
+	Logger log;
 	Properties properties;
 	std::string archivo = properties.getProperty("process.commonFile");
 	try {
 		memoria.crear(archivo, 'E');
 	} catch (std::string &e) {
+		log.fatal("Caja", e);
 		throw e;
 	}
 }

@@ -10,6 +10,7 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>
 #include <Modelo/Auto.h>
+
 class AutoFactory {
 public:
 	AutoFactory();

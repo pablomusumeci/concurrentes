@@ -10,7 +10,7 @@
 
 #include "../Semaforo.h"
 #include "../MemoriaCompartida.h"
-
+#include "../Logger/Logger.h"
 /**
  * Clase Caja que se usa a modo de proxy para operar sobre ella.
  * Usa un semaforo, identificado por el archivo comun (de properties) y

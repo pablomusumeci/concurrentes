@@ -11,6 +11,9 @@
 #include "../Logger/Logger.h"
 #define SEPARADOR ';'
 
+#define NORMAL 2
+#define VIP 1
+
 typedef struct st_auto {
 	long mtype;
 	int id;

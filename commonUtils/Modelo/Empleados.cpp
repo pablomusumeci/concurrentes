@@ -10,11 +10,13 @@
 #include <stdlib.h>
 
 Empleados::Empleados(): semaforo('B') {
+	Logger log;
 	Properties properties;
 	std::string archivo = properties.getProperty("process.commonFile");
 	try {
 		memoria.crear(archivo, 'D');
 	} catch (std::string &e) {
+		log.fatal("Empleados", e);
 		throw e;
 	}
 }
