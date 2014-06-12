@@ -17,7 +17,7 @@
 #include <Fifo/FifoLectura.h>
 #include <Seniales/SignalHandler.h>
 #include <Seniales/SIGINT_Handler.h>
-#define TAM_BUFFER 19
+#define TAM_BUFFER 30
 
 int depositarEnCaja(int monto){
 	Caja caja;

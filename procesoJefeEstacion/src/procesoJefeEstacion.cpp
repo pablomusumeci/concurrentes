@@ -17,7 +17,7 @@ using namespace std;
 #include <Cola.h>
 
 #define TAG "Jefe de Estacion"
-#define TAM_BUFFER 19
+#define TAM_BUFFER 31
 
 int calcularRandom();
 
@@ -48,37 +48,25 @@ int main() {
 
 		while (sigint_handler.getGracefulQuit() == 0) {
 			st_auto autoRecibido;
-			int resultado = cola.leer(0, &autoRecibido);
+			int resultado = cola.leer(-3, &autoRecibido);
 			Auto automovil(autoRecibido);
 			log.info(TAG, "Recibi: " + automovil.serializar());
-		}
+			if(resultado > 0){
+				if (empleados.hayEmpleadoLibre()) {
 
-		// while (sigint_handler.getGracefulQuit() == 0) {
-		// 	ssize_t bytesLeidos = canalGenJde.leer(static_cast<void*>(buffer),
-		// 	TAM_BUFFER);
-		// 	if (bytesLeidos > 0) {
-		// 		std::string mensaje = buffer;
-		// 		mensaje.resize(bytesLeidos);
-		// 		Auto automovil(mensaje);
-		// 		log.debug(TAG, "Recibi: " + automovil.serializar());
-
-		// 		if (empleados.hayEmpleadoLibre()) {
-		// 			std::string mensajeEnviar = automovil.serializar();
-		// 			log.debug(TAG,
-		// 					"Enviando auto: " + mensajeEnviar);
-		// 			canalJdeEmp.escribir(
-		// 					static_cast<const void*>(mensajeEnviar.c_str()),
-		// 					mensajeEnviar.length());
-		// 		} else {
-		// 			// Rechazar el auto
-		// 			log.debug(TAG,
-		// 					"Se rechaza el auto con id "
-		// 							+ StringUtils::intToString(
-		// 									automovil.getID())
-		// 							+ " por falta de empleados libres");
-		// 		}
-		// 	}
-		// }
+					std::string mensajeEnviar = automovil.serializar();
+					log.debug(TAG, "Enviando auto: " + mensajeEnviar);
+					canalJdeEmp.escribir(
+							static_cast<const void*>(mensajeEnviar.c_str()),
+							mensajeEnviar.length());
+				} else {
+					// Rechazar el auto
+					log.debug(TAG, "Se rechaza el auto con id "
+							+ StringUtils::intToString(automovil.getID())
+									+ " por falta de empleados libres");
+				}
+			}
+		 }
 
 		canalGenJde.cerrar();
 		canalJdeEmp.cerrar();

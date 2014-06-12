@@ -42,9 +42,12 @@ void Auto::hidratar(std::string cadena){
 		std::vector<std::string> partes = StringUtils::split(cadena, SEPARADOR);
 		std::vector<std::string> idString = StringUtils::split(partes[0], ':');
 		std::vector<std::string> dineroString = StringUtils::split(partes[1], ':');
+		std::vector<std::string> prioridadString = StringUtils::split(partes[2], ':');
 
 		this->id = StringUtils::stringToInt(idString[1]);
 		this->dinero = StringUtils::stringToInt(dineroString[1]);
+		this->mtype = (long)(StringUtils::stringToInt(prioridadString[1]));
+
 	} catch (...){
 		Logger log;
 		log.error("Auto", "Parsing exception - Mensaje recibido: " + cadena);
