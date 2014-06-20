@@ -26,7 +26,7 @@
 
 void inicializarCajaYListaDeEmpleados(int cantEmpleados, Caja& caja, Empleados& empleados){
 	// Monto incial de la caja = 0
-	caja.inicializar(0);
+	//caja.inicializar(0);
 	empleados.inicializar(cantEmpleados);
 }
 
@@ -45,9 +45,11 @@ int main(int argc, char* argv[]) {
 	std::string procesoJefeEstacion = "";
 	std::string procesoGenerador = "";
 	std::string procesoAdmin = "";
+	std::string procesoCaja = "";
 	std::string archivoSemaforo = "";
 	std::string archivoEmpleado = "";
 	std::string archivoSemaforoJdeEmp = "";
+
 
 	// Lectura de Properties
 	try{
@@ -56,6 +58,7 @@ int main(int argc, char* argv[]) {
 		procesoJefeEstacion = properties.getProperty("process.jefeEstacion");
 		procesoGenerador = properties.getProperty("process.generadorAutos");
 		procesoAdmin = properties.getProperty("process.administrador");
+		procesoCaja = properties.getProperty("process.caja");
 		archivoSemaforo = properties.getProperty("semaforo.surtidores");
 		archivoEmpleado = properties.getProperty("process.empleado");
 		archivoSemaforoJdeEmp = properties.getProperty("semaforo.jde.empleado");
@@ -78,6 +81,8 @@ int main(int argc, char* argv[]) {
 	Empleados arrayEmpleados;
 	Caja caja;
 	Cola<st_auto> colaGeneradorJde(archivoEmpleado,'c');
+	Cola<st_peticion> colaPeticiones(archivoEmpleado,'d');
+	Cola<st_peticion> colaRespuestas(archivoEmpleado,'e');
 
 	try{
 		log.info(TAG, "Comienzo de ejecucion");
@@ -87,6 +92,9 @@ int main(int argc, char* argv[]) {
 
 		log.info(TAG, "Levanto generador de autos");
 		Proceso* Generador = new Proceso(procesoGenerador);
+
+		log.info(TAG, "Levanto proceso Caja");
+		Proceso* Caja = new Proceso(procesoCaja);
 
 		log.info(TAG, "Levanto administrador");
 		Proceso* Admin = new Proceso(procesoAdmin);
@@ -125,6 +133,8 @@ int main(int argc, char* argv[]) {
 		delete JefeEstacion;
 		Admin->interrupt();
 		delete Admin;
+		Caja->interrupt();
+		delete Caja;
 
 		log.debug(TAG, "Cuenta del semaforo semaforoSurtidor " + StringUtils::intToString(semaforoSurtidor.getProcesosEsperando()));
 		log.debug(TAG, "Cuenta del semaforo semaforoJdeEmpleados " + StringUtils::intToString(semaforoJdeEmpleados.getProcesosEsperando()));
@@ -132,6 +142,8 @@ int main(int argc, char* argv[]) {
 		semaforoSurtidor.eliminar();
 		semaforoJdeEmpleados.eliminar();
 		colaGeneradorJde.destruir();
+		colaPeticiones.destruir();
+		colaRespuestas.destruir();
 
 	}catch(char const* e){
 		log.error(TAG, e);

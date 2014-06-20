@@ -18,13 +18,13 @@
 #include <Seniales/SignalHandler.h>
 #include <Seniales/SIGINT_Handler.h>
 #define TAM_BUFFER 30
-
+/*
 int depositarEnCaja(int monto){
 	Caja caja;
 	caja.depositar(monto);
 	int montoNuevo = caja.consultar();
 	return montoNuevo;
-}
+}*/
 
 /**
  * Calcula el tiempo que el proceso empleado duerme
@@ -46,9 +46,11 @@ int main(int argc, char* argv[]){
 	std::string archivoSemaforoSurtidores = properties.getProperty("semaforo.surtidores");
 	std::string base = properties.getProperty("constante.tiempo.empleado");
 	int tiempoBase = StringUtils::stringToInt(base);
+
 	FifoLectura canalJdeEmp(archivoFifoJdeEmp);
 	Semaforo semaforoFifoJdeEmp(archivoSemaforoJdeEmp, 's');
 	Semaforo semaforoSurtidor(archivoSemaforoSurtidores, 's');
+	Caja caja;
 	char buffer [ TAM_BUFFER ];
 	memset(buffer, '\0', TAM_BUFFER);
 	canalJdeEmp.abrir();
@@ -80,8 +82,9 @@ int main(int argc, char* argv[]){
 					semaforoSurtidor.v();
 					// Deposito en la caja
 					int dineroAuto = automovil.getDinero();
-					int montoTotal = depositarEnCaja(dineroAuto);
-					log.debug(tag, "Deposito $" +  StringUtils::intToString(dineroAuto) + " - Saldo Nuevo $" + StringUtils::intToString(montoTotal));
+					//int montoTotal = depositarEnCaja(dineroAuto);
+					int saldoNuevo = caja.depositar(dineroAuto, 2 ,tag);
+					log.debug(tag, "Deposito $" +  StringUtils::intToString(dineroAuto) + " - Saldo Nuevo $" + StringUtils::intToString(saldoNuevo));
 					// El empleado se vuelve a marcar como libre
 					empleados.devolverEmpleado();
 				} else {

@@ -24,7 +24,7 @@ int main() {
 	Caja caja;
 	while (sigint_handler.getGracefulQuit() == 0) {
 		sleep(tiempo);
-		int valor = caja.consultar();
+		int valor = caja.consultar(1 ,TAG);
 		if (valor >= 0) {
 			log.info(TAG, "Caja $" + StringUtils::intToString(valor));
 		} else {

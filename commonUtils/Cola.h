@@ -7,6 +7,12 @@
 #include <stdio.h>
 #include <string>
 
+typedef struct st_peticion {
+	long mtype;
+	pid_t id;
+	int dinero;
+} st_peticion;
+
 template <class T> class Cola {
 	private:
 		key_t	clave;

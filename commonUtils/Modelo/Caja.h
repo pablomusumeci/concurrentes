@@ -9,8 +9,10 @@
 #define CAJA_H_
 
 #include "../Semaforo.h"
+#include "../Cola.h"
 #include "../MemoriaCompartida.h"
 #include "../Logger/Logger.h"
+#include <unistd.h>
 /**
  * Clase Caja que se usa a modo de proxy para operar sobre ella.
  * Usa un semaforo, identificado por el archivo comun (de properties) y
@@ -20,26 +22,25 @@
 class Caja {
 public:
 	Caja();
-	/**
-	 * establece el valor inicial de la caja, inicializando a su vez,
-	 * la memoria compartida y el semaforo.
-	 */
-	void inicializar(int montoInicial);
+
 	/**
 	 * Suma al valor de la caja. Es bloqueante.
 	 */
-	void depositar(int monto);
+	int depositar(int monto, long prioridad, std::string TAG);
 	/**
 	 * Devuelve el valor actual de la caja. Tambien es bloqueante.
 	 * Si se interrumpe al proceso mientras esperaba en la caja,
 	 * devuelve -1
 	 */
-	int consultar();
+	int consultar(long prioridad, std::string TAG);
 	void eliminarRecursos();
 	virtual ~Caja();
 private:
-	Semaforo semaforo;
-	MemoriaCompartida<int> memoria;
+//	Semaforo semaforo;
+	Logger log;
+	Cola<st_peticion>* colaPeticiones;
+	Cola<st_peticion>* colaRespuestas;
+//	MemoriaCompartida<int> memoria;
 };
 
 #endif /* CAJA_H_ */

@@ -9,12 +9,13 @@
 #include <string>
 #include "../Properties/Properties.h"
 
-Caja::Caja():semaforo('A') {
+Caja::Caja(){
 	Logger log;
 	Properties properties;
-	std::string archivo = properties.getProperty("process.commonFile");
+	std::string archivo = properties.getProperty("process.empleado");
 	try {
-		memoria.crear(archivo, 'E');
+		colaPeticiones = new Cola<st_peticion>(archivo,'d');
+		colaRespuestas = new Cola<st_peticion>(archivo,'e');
 	} catch (std::string &e) {
 		log.fatal("Caja", e);
 		throw e;
@@ -22,33 +23,43 @@ Caja::Caja():semaforo('A') {
 }
 
 Caja::~Caja() {
+	delete colaPeticiones;
+	delete colaRespuestas;
 }
 
-void Caja::depositar(int cobro){
-	int ret = semaforo.p();
-	if (ret == -1 ){
-		return;
-	}
-	int monto = memoria.leer();
-	memoria.escribir(monto + cobro);
-	semaforo.v();
-}
+// devuelve nuevo saldo
+int Caja::depositar(int cobro, long prioridad, std::string TAG){
+	st_peticion peticion;
+	pid_t id = getpid();
+	peticion.mtype = prioridad;
+	peticion.id = id;
+	peticion.dinero = cobro;
 
-int Caja::consultar(){
-	int ret = semaforo.p();
-	if (ret == -1){
+	// request para escribir en caja
+	int resultado = colaPeticiones->escribir(peticion);
+
+	if (resultado < 0){
+		log.debug(TAG, "Error enviando peticion para escribir en la caja.");
 		return -1;
 	}
-	int monto = memoria.leer();
-	semaforo.v();
-	return monto;
+	// leo respuesta dirigida a mi
+	resultado = colaRespuestas->leer(id ,&peticion);
+
+	if (resultado < 0){
+			log.debug(TAG, "Error leyendo peticion de la caja.");
+			return -1;
+	}
+
+	return peticion.dinero;
 }
 
-void Caja::inicializar(int montoInicial) {
-	semaforo.inicializar(1);
-	memoria.escribir(montoInicial);
+int Caja::consultar(long prioridad, std::string TAG){
+	return depositar(0, prioridad, TAG);
 }
+
 
 void Caja::eliminarRecursos() {
-	semaforo.eliminar();
+	// se destruyen en el procesoPrincipal
+	//colaPeticiones->destruir();
+	//colaRespuestas->destruir();
 }
