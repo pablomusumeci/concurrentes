@@ -3,11 +3,12 @@
 \usepackage{graphicx} %option specific for pdfLatex compilation
 \usepackage{makeidx}
 \usepackage{lscape}
-
+\usepackage{framed}
+\usepackage{listings}
 \usepackage[spanish]{babel}
 \usepackage[utf8]{inputenc} 
 \usepackage{indentfirst}
-
+\usepackage{varwidth}
 \usepackage[margin=1in]{geometry}
 
 
@@ -204,5 +205,76 @@ trabajo práctico.
 	\includegraphics[scale=0.50, angle=90]{AccesoCaja.png}
 	\centering
 	\end{figure}
+
+	\newpage
+
+	\section{Parte 2}
+
+	\subsection{Diseño}
+
+	En esta sección vamos a detallar las modificaciones realizadas para cumplir con
+	los requerimientos presentes en el enunciado.
+
+	\subsubsection{Proceso Caja}
+
+	Introducimos en el diseño de la solución un nuevo proceso para lidiar con el siguiente requerimiento:
+
+	\begin{framed}
+	El administrador deberá tener prioridad sobre los empleados al momento de utilizar la caja.
+	\end{framed}
+
+	El \emph{Proceso Caja} es el encargado de controlar el acceso a la misma, la cual ha dejado de estar en memoria
+	compartida (como era el caso en el trabajo práctico 1) para pasar a ser una variable entera que reside en la
+	memoria de dicho proceso.
+	Esto se debe a que, para satisfacer la restricción impuesta, ya que tenemos un proceso que controla el acceso,
+	y es el único que va a interactuar de manera directa con la caja, dejo de ser necesario que la misma se encuentre
+	en memoria compartida.
+
+	Los procesos \emph{empleado} y \emph{administrador} se comunicaran con el \emph{Proceso Caja} por medio de dos colas de mensajes, envíando peticiones al \emph{Proceso Caja}, dichas peticiones están compuestas por los siguientes valores:
+
+	\begin{description}
+		\item[mtype] Representa la prioridad del proceso que realiza la petición.
+		\item[id] Identificador unívoco del procesoque realiza la petición.
+		\item[dinero] Dinero que se desea depositar en la caja.
+	\end{description}
+
+	\begin{center}
+		\begin{varwidth}{0.5\textwidth}
+			\begin{lstlisting}[frame=single, language=C, caption={Peticiones encoladas}]
+			
+typedef struct st_peticion {
+	long mtype;
+	pid_t id;
+	int dinero;
+} st_peticion;
+			\end{lstlisting}
+		\end{varwidth}
+	\end{center}
+	Con dicha interfaz, se resuelven las 2 peticiones posibles, debido a que, si el \emph{administrador}
+	desea consultar el valor de la caja, solo debe enviar la estructura que se muestra a continuación con el
+	atributo dinero en cero.
+
+	Una vez realizada la petición por un proceso, el mismo debe esperar la llegada de un mensaje que le
+	de confirme su depósito. Dicha espera la realiza leyendo en la cola de recepción, y la misma representa
+	el tiempo que el empleado esta haciendo cola para depositar el valor recibido.
+
+	Como contrapartida, el \emph{administrador}, quien tiene una prioridad mayor a los empleados, realiza su
+	petición y espera la resputa al igual que los empleados, y en dicha respuesta recibe el saldo que se 
+	encuentra en la caja.
+
+	\subsubsection{Comunicación Generador - Jefe de estación}
+
+	A continuación detallemos otra de las modificaciones realizadas, esta vez para cumplir con el siguiente requerimiento:
+	
+	\begin{framed}
+	La estación de servicio cuenta con dos tipos de clientes: regulares y VIP
+	\end{framed}
+
+	En le trabajo práctico 1, el envío de autos entre el proceso \emph{Generador de Autos} y el proceso \emph{Jefe de Estación}
+	se llevaba a cabo por medio de un FIFO. 
+
+	Se reemplazo dicho medio de comunicación por una cola de mensajes en donde el Generador encola los autos que va generando 
+	(con cierta probabilidad de generar un cliente VIP) y el Jefe va desencolando los mismos por orden de prioridad (y ante la misma prioridad desencola el primer elemento de la cola que cumpla la condición, ergo, el que hace más tiempo se encuentra 
+	esperando en la misma).
 
 \end{document}
