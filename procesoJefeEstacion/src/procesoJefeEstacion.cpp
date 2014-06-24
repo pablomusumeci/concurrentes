@@ -70,6 +70,7 @@ int main() {
 
 		canalGenJde.cerrar();
 		canalJdeEmp.cerrar();
+		canalJdeEmp.eliminar();
 		SignalHandler::getInstance()->destruir();
 	} catch (char const* e) {
 		log.error(TAG, e);

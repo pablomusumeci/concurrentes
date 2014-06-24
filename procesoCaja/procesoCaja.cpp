@@ -11,12 +11,13 @@
 #include <Seniales/SignalHandler.h>
 #include <Seniales/SIGINT_Handler.h>
 #include <Cola.h>
+#include <unistd.h>
 #include <StringUtils.h>
 #include <errno.h>
 int main(char *args[], int argc){
 
 	Logger log;
-	std::string TAG = "PROCESO CAJA";
+	std::string TAG = "Proceso Caja";
 	SIGINT_Handler sigint_handler;
 	SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
 	std::string archivoEmpleado = "";
@@ -31,9 +32,10 @@ int main(char *args[], int argc){
 
 	Cola<st_peticion> colaPeticiones(archivoEmpleado,'d');
 	Cola<st_peticion> colaRespuestas(archivoEmpleado,'e');
-	int caja;
+	int caja = 0;
 	st_peticion peticion;
 	while (sigint_handler.getGracefulQuit() == 0) {
+
 		int resultado = colaPeticiones.leer(-3, &peticion);
 		if (resultado != -1){
 			log.debug(TAG, "Peticion ID: " + StringUtils::intToString(peticion.id) + " $ " + StringUtils::intToString(peticion.dinero));
