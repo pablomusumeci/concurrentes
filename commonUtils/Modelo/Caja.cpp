@@ -7,6 +7,7 @@
 
 #include "Caja.h"
 #include <string>
+#include "../StringUtils.h"
 #include "../Properties/Properties.h"
 
 Caja::Caja(){
@@ -36,6 +37,7 @@ int Caja::depositar(int cobro, long prioridad, std::string TAG){
 	peticion.dinero = cobro;
 
 	// request para escribir en caja
+	log.debug(TAG, "Esperando acceso a la caja.");
 	int resultado = colaPeticiones->escribir(peticion);
 
 	if (resultado < 0){
