@@ -91,13 +91,13 @@ int main(int argc, char* argv[]){
 					if (errno == EINTR)
 						log.debug(tag, "Recibi señal mientras esperaba el surtidor.");
 					else
-						log.error(tag, "Error pidiendo surtidores.");
+						log.error(tag, "Error pidiendo surtidores. ERRNO:" + StringUtils::intToString(errno));
 				}
 			} else {
 				if (errno == EINTR)
 					log.debug(tag, "Recibi señal mientras esperaba el fifo.");
 				else
-					log.error(tag, "Error pidiendo auto.");
+					log.error(tag, "Error esperando auto. ERRNO:" + StringUtils::intToString(errno));
 			}
 		}
 	}

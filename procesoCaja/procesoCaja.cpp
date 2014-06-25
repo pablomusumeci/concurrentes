@@ -47,11 +47,13 @@ int main(char *args[], int argc){
 			if (errno == EINTR){
 				log.debug(TAG, "Recibi señal mientras leia de colaPeticiones.");
 			} else {
-				log.debug(TAG, "Error leyendo de colaPeticiones.");
+				log.error(TAG, "Error leyendo de colaPeticiones. ERRNO:" + StringUtils::intToString(errno));
 			}
 		}
 	}
 
+	SignalHandler::getInstance()->destruir();
+	log.info(TAG, "Ejecucion finalizada");
 	return 0;
 }
 

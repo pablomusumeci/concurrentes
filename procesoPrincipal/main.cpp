@@ -19,19 +19,15 @@
 #include <Proceso.h>
 #include <Cola.h>
 #include <Modelo/Auto.h>
-#include <Modelo/Caja.h>
 #include <Modelo/Empleados.h>
 
 #define TAG "Proceso principal"
 
-void inicializarCajaYListaDeEmpleados(int cantEmpleados, Caja& caja, Empleados& empleados){
-	// Monto incial de la caja = 0
-	//caja.inicializar(0);
+void inicializarListaDeEmpleados(int cantEmpleados, Empleados& empleados){
 	empleados.inicializar(cantEmpleados);
 }
 
-void destruirCajaYListaDeEmpleados(Caja& caja, Empleados& empleados){
-	caja.eliminarRecursos();
+void destruirListaDeEmpleados(Empleados& empleados){
 	empleados.eliminarRecursos();
 }
 
@@ -79,7 +75,6 @@ int main(int argc, char* argv[]) {
 	 * Variables compartidas entre los procesos.
 	 */
 	Empleados arrayEmpleados;
-	Caja caja;
 	Cola<st_auto> colaGeneradorJde(archivoEmpleado,'c');
 	Cola<st_peticion> colaPeticiones(archivoEmpleado,'d');
 	Cola<st_peticion> colaRespuestas(archivoEmpleado,'e');
@@ -99,7 +94,7 @@ int main(int argc, char* argv[]) {
 		log.info(TAG, "Levanto administrador");
 		Proceso* Admin = new Proceso(procesoAdmin);
 
-		inicializarCajaYListaDeEmpleados(CantEmpleados, caja, arrayEmpleados);
+		inicializarListaDeEmpleados(CantEmpleados, arrayEmpleados);
 
 		// Controla acceso de empleados a surtidores
 		Semaforo semaforoSurtidor(archivoSemaforo,'s');
@@ -138,7 +133,7 @@ int main(int argc, char* argv[]) {
 
 		log.debug(TAG, "Cuenta del semaforo semaforoSurtidor " + StringUtils::intToString(semaforoSurtidor.getProcesosEsperando()));
 		log.debug(TAG, "Cuenta del semaforo semaforoJdeEmpleados " + StringUtils::intToString(semaforoJdeEmpleados.getProcesosEsperando()));
-		destruirCajaYListaDeEmpleados(caja, arrayEmpleados);
+		destruirListaDeEmpleados(arrayEmpleados);
 		semaforoSurtidor.eliminar();
 		semaforoJdeEmpleados.eliminar();
 		colaGeneradorJde.destruir();

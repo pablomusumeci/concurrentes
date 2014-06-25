@@ -62,6 +62,6 @@ int Caja::consultar(long prioridad, std::string TAG){
 
 void Caja::eliminarRecursos() {
 	// se destruyen en el procesoPrincipal
-	//colaPeticiones->destruir();
-	//colaRespuestas->destruir();
+	colaPeticiones->destruir();
+	colaRespuestas->destruir();
 }

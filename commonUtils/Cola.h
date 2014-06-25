@@ -6,6 +6,7 @@
 #include <sys/ipc.h>
 #include <stdio.h>
 #include <string>
+#include "Logger/Logger.h"
 
 typedef struct st_peticion {
 	long mtype;
@@ -27,13 +28,17 @@ template <class T> class Cola {
 };
 
 template <class T> Cola<T> :: Cola ( const std::string& archivo,const char letra ) {
+	Logger log;
 	this->clave = ftok ( archivo.c_str(),letra );
-	if ( this->clave == -1 )
+	if ( this->clave == -1 ){
 		perror ( "Error en ftok" );
-
+		log.error("Cola",  "Error en ftok");
+	}
 	this->id = msgget ( this->clave,0777|IPC_CREAT );
-	if ( this->id == -1 )
+	if ( this->id == -1 ){
 		perror ( "Error en msgget" );
+		log.error("Cola",  "Error en msgget");
+	}
 }
 
 template <class T> Cola<T> :: ~Cola () {
