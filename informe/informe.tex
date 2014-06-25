@@ -16,7 +16,7 @@
 \input{./title.tex}
 \newpage
 \tableofcontents
-
+\newpage
 \section{Hipótesis}
 
 A continuación se presentan los supuestos que consideramos a la hora de desarollar el 
@@ -277,8 +277,22 @@ typedef struct st_peticion {
 	(con cierta probabilidad de generar un cliente VIP) y el Jefe va desencolando los mismos por orden de prioridad (y ante la misma prioridad desencola el primer elemento de la cola que cumpla la condición, ergo, el que hace más tiempo se encuentra 
 	esperando en la misma).
 
+	Los autos guardan sus datos dentro de un struct con el método \texttt{getStruct()} y el proceso generador de autos lo encola.
+	Luego, el proceso Jefe de Estación desencola el struct e hidrata el auto con el método \texttt{fromStruct(const st\_auto\& structAuto)}.
+
+\begin{center}
+		\begin{varwidth}{0.5\textwidth}
+			\begin{lstlisting}[frame=single, language=C, caption={Autos encoladas}]
+	typedef struct st_auto {
+	long mtype;
+	int id;	
+	int dinero;
+} st_auto;
+		\end{lstlisting}
+	\end{varwidth}
+\end{center}
 	\newpage
-	\section{Diagrama esquemático de interacciones}
+	\subsection{Diagrama esquemático de interacciones}
 	
 	\begin{figure}[h]
 	\includegraphics[angle=90, scale = 0.27]{esquema_2.png}
@@ -286,7 +300,7 @@ typedef struct st_peticion {
 	\end{figure}
 
 	\newpage
-	\section{Casos de uso}
+	\subsection{Casos de uso}
 
 	\begin{figure}[h]
 	\includegraphics[scale=0.50]{casos_de_uso.png}
@@ -294,7 +308,7 @@ typedef struct st_peticion {
 	\end{figure}
 
 	\newpage
-	\section{Diagrama de estados del proceso Empleado}
+	\subsection{Diagrama de estados del proceso Empleado}
 
 	\begin{figure}[h]
 	\includegraphics[scale=0.60]{FSM_Empleado.png}
@@ -302,7 +316,7 @@ typedef struct st_peticion {
 	\end{figure}
 
 	\newpage
-	\section{Diagrama de clase de acceso a la caja}
+	\subsection{Diagrama de clase de acceso a la caja}
 
 	\begin{figure}[h]
 	\includegraphics[angle=90,scale=0.56]{AccesoCaja2.png}
