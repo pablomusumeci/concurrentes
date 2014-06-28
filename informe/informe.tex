@@ -262,6 +262,25 @@ typedef struct st_peticion {
 	petición y espera la resputa al igual que los empleados, y en dicha respuesta recibe el saldo que se 
 	encuentra en la caja.
 
+	\subsubsection{Distinción entre surtidores}
+
+	En la segunda parte del trábajo práctico, debemos realizar un cambio respecto a la asignación de surtidores,
+	ya que en la primer entrega no era necesario distinguir cual se estaba utilizando. 
+	
+	\begin{framed}
+	Se deberá poder tracear en el log de la simulación que empleado atendió a que auto y que surtidor
+	utilizó al hacerlo.
+	\end{framed}
+
+	Para la primer entrega, los surtidores estaban realizados como un semáforo de valor igual a la cantidad
+	de semáforos requerida para la simulación. Dicha implementación nos permitía controlar que no se 
+	utilizen m`as surtidores de los disponibles en determinado momento, pero no nos dejaba idenfiticar
+	cual de ellos se estaba utilizando.
+
+	La forma elegida para cumplir con la especificación solicitada, fue agregar una cola en donde se guardan
+	los surtidores, en donde cada uno esta asociado con un identificador unívoco. Los empleados desencolan
+	un surtidor, trabajan y cuando han finalizado su labor vuelven a encolar el surtidor utilizado. De esta manera, si un empleado quiere trabajar y no un surtidor libre que pueda utilizar, se quedar`a esperando en la cola hasta que uno se libere.
+
 	\subsubsection{Comunicación Generador - Jefe de estación}
 
 	A continuación detallemos otra de las modificaciones realizadas, esta vez para cumplir con el siguiente requerimiento:
@@ -306,6 +325,204 @@ typedef struct st_peticion {
 	\includegraphics[scale=0.50]{casos_de_uso.png}
 	\centering
 	\end{figure}
+
+    \begin{tabular}{|p{4cm}|p{12cm}|}
+    \hline
+    \textbf{Caso de uso:} & Generar auto \\
+    \hline
+    \textbf{Descripcion:} &  Crea el automovil que se dirige a la estacion\\
+    \hline
+    \textbf{Actores participantes:} & Generador de autos  \\
+    \hline
+ 
+    \textbf{Pre-condiciones:} &  El proceso principal inicializo los recursos utilizados\\
+    \hline
+    \hline
+    \textbf{Flujos:} &\\
+    \hline
+	\textbf{Flujo Principal:} &\\ 
+
+	\hline
+	1 & El generador utiliza un numero aleatorio para determinar si el auto creado sera VIP o regular\\
+    \hline
+	2 & El generador asigna un ID autoincremental al automovil creado\\
+    \hline
+	3 & El generador crea un struct con los datos del automovil creado\\
+    \hline
+	4 & El generador escribe en la cola el struct mencionado anteriomente\\
+    \hline
+	5 & El generador duerme un tiempo constante (configurable) antes de enviar otro automovil\\
+    \hline
+    \hline
+	\textbf{Flujos de excepción:} & Se recibio una señal que cambia la condicion del while que ejecuta el proceso. En la proxima iteracion se saldra del ciclo y terminara el proceso.\\
+    \hline
+	\textbf{Post-condiciones:} & Se encolo un automovil en la cola que comparten el generador y el jefe de estacion\\
+	\hline
+	\end{tabular}
+
+	\newpage
+
+	\begin{tabular}{|p{4cm}|p{12cm}|}
+    \hline
+    \textbf{Caso de uso:} & Distribuir automoviles \\
+    \hline
+    \textbf{Descripcion:} &  Despacha automoviles hacia los empleados o la salida\\
+    \hline
+    \textbf{Actores participantes:} & Jefe de estacion  \\
+    \hline
+ 
+    \textbf{Pre-condiciones:} &  El proceso principal inicializo los recursos utilizados. Existe 
+    al menos un auto encolado por el generador.\\
+    \hline
+    \hline
+    \textbf{Flujos:} &\\
+    \hline
+	\textbf{Flujo Principal:} &\\ 
+
+	\hline
+	1 & El JDE desencola un auto\\
+	\hline
+	2 & Consulta la variable en memoria compartida que tiene la cantidad de empleados disponibles\\
+	\hline
+	3 & El generador crea un struct con los datos del automovil creado\\
+	\hline
+	4 & Existe un empleado disponible
+		\begin{itemize}
+			\item Enviar automovil por el FIFO entre JDE y empleados 
+		\end{itemize}
+		\\
+	\hline
+	5 & No existe un empleado disponible
+		\begin{itemize}
+			\item Se descarta el automovil
+		\end{itemize}
+		\\
+	\hline
+	\hline
+	\textbf{Flujos de excepción:} & Se recibio una señal que cambia la condicion del while que ejecuta el proceso. En la proxima iteracion se saldra del ciclo y terminara el proceso.\\
+    \hline
+
+    \hline
+	\textbf{Post-condiciones:} & Se desencolo un automovil de la cola compartida entre el generador y el JDE.\\
+	\hline
+	\end{tabular}
+
+	\newpage
+
+	\begin{tabular}{|p{4cm}|p{12cm}|}
+    \hline
+    \textbf{Caso de uso:} & Empleado trabajando \\
+    \hline
+    \textbf{Descripcion:} &  Ciclo de trabajo del empleado\\
+    \hline
+    \textbf{Actores participantes:} & Empleado\\
+    \hline
+ 
+    \textbf{Pre-condiciones:} &  El proceso principal inicializo los recursos utilizados. El empleado tiene un auto leido del FIFO compartido con el JDE\\
+    \hline
+    \hline
+    \textbf{Flujos:} &\\
+    \hline
+	\textbf{Flujo Principal:} &\\ 
+
+	\hline
+	1 & El empleado decrementa la variable que representa la cantidad de empleados disponibles\\
+	\hline
+	2 & El empleado se queda leyendo de la cola de surtidores hasta poder conseguir uno\\
+	\hline
+	3 & Calcula el tiempo a trabajar a partir del dinero que tiene el automovil\\
+	\hline
+	4 & Duerme el tiempo calculado\\
+	\hline
+	4 & Envia una solicitud para depositar el dinero en la caja (escribiendo en la cola) \\
+	\hline
+	5 & Lee en la cola hasta recibir la respuesta de que su solicitud fue exitosa (y asi simula la espera en la caja)\\
+	\hline
+	6 & Encola el struct que representa al surtidor utilizado, dejandolo libre para que lo use otro empleado\\
+	\hline
+	7 & Aumenta la cantidad de empleados disponibles\\
+	\hline
+	\hline
+	\textbf{Flujos de excepción:} & Se recibio una señal que cambia la condicion del while que ejecuta el proceso. En la proxima iteracion se saldra del ciclo y terminara el proceso.\\
+    \hline
+
+    \hline
+	\textbf{Post-condiciones:} & Se leyo un automovil del FIFO\\
+	\hline
+	\end{tabular}
+
+	\newpage
+
+	\begin{tabular}{|p{4cm}|p{12cm}|}
+    \hline
+    \textbf{Caso de uso:} & Consultar saldo de la caja \\
+    \hline
+    \textbf{Descripcion:} &  El administrador consulta el saldo depositado hasta el momento\\
+    \hline
+    \textbf{Actores participantes:} & Administrador\\
+    \hline
+ 
+    \textbf{Pre-condiciones:} &  El proceso principal inicializo los recursos utilizados\\
+    \hline
+    \hline
+    \textbf{Flujos:} &\\
+    \hline
+	\textbf{Flujo Principal:} &\\ 
+
+	\hline
+	1 & Envia peticion de deposito para la caja, con saldo 0 para depositar\\
+	\hline
+	2 & Espera para desencolar la respuesta con el saldo de la caja\\
+	\hline
+	3 & Escribe en el log el saldo de la caja\\
+	\hline
+	4 & Duerme un tiempo constante (configurable)\\
+	\hline
+	\textbf{Flujos de excepción:} & Se recibio una señal que cambia la condicion del while que ejecuta el proceso. En la proxima iteracion se saldra del ciclo y terminara el proceso.\\
+    \hline
+
+    \hline
+	\textbf{Post-condiciones:} & Se escribio en el log el saldo de la caja\\
+	\hline
+	\end{tabular}
+
+	\newpage
+
+	\begin{tabular}{|p{4cm}|p{12cm}|}
+    \hline
+    \textbf{Caso de uso:} & Controlar acceso a la caja \\
+    \hline
+    \textbf{Descripcion:} &  El proceso caja administra las solicitudes que recibe para depositar dinero\\
+    \hline
+    \textbf{Actores participantes:} & Proceso caja\\
+    \hline
+ 
+    \textbf{Pre-condiciones:} &  El proceso principal inicializo los recursos utilizados\\
+    \hline
+    \hline
+    \textbf{Flujos:} &\\
+    \hline
+	\textbf{Flujo Principal:} &\\ 
+
+	\hline
+	1 & Espera peticion para depositar en la caja\\
+	\hline
+	2 & Desencola la peticion entrante\\
+	\hline
+	3 & Suma en la variable local al proceso el monto recibido\\
+	\hline
+	4 & Genera una peticion de respuesta con el valor actual de la caja\\
+	\hline
+	5 & Envia la peticion dirigida al proceso que hizo el deposito\\
+	\hline
+	\hline
+	\textbf{Flujos de excepción:} & Se recibio una señal que cambia la condicion del while que ejecuta el proceso. En la proxima iteracion se saldra del ciclo y terminara el proceso.\\
+    \hline
+
+    \hline
+	\textbf{Post-condiciones:} & Se deposito en la caja el monto recibido, y se devolvio el saldo actual\\
+	\hline
+	\end{tabular}
 
 	\newpage
 	\subsection{Diagrama de estados del proceso Empleado}
