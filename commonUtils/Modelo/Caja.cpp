@@ -41,14 +41,14 @@ int Caja::depositar(int cobro, long prioridad, std::string TAG){
 	int resultado = colaPeticiones->escribir(peticion);
 
 	if (resultado < 0){
-		log.debug(TAG, "Error enviando peticion para escribir en la caja.");
+		log.debug(TAG, "No se pudo enviar peticion para escribir en la caja.");
 		return -1;
 	}
 	// leo respuesta dirigida a mi
 	resultado = colaRespuestas->leer(id ,&peticion);
 
 	if (resultado < 0){
-			log.debug(TAG, "Error leyendo peticion de la caja.");
+			log.debug(TAG, "No se pudo leer peticion de la caja.");
 			return -1;
 	}
 

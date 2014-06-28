@@ -52,8 +52,7 @@ int main(int argc, char* argv[]){
 	Semaforo semaforoFifoJdeEmp(archivoSemaforoJdeEmp, 's');
 	Semaforo semaforoSurtidor(archivoSemaforoSurtidores, 's');
 	Caja caja;
-	char buffer [ TAM_BUFFER ];
-	memset(buffer, '\0', TAM_BUFFER);
+	char buffer [ TAM_BUFFER ] = {0};
 	canalJdeEmp.abrir();
 	Empleados empleados;
 	Cola<st_surtidor> colaSurtidores(archivoEmpleado,'f');

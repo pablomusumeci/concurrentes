@@ -44,6 +44,7 @@ int main(int argc, char* argv[]) {
 
 		canal.cerrar();
 		canal.eliminar();
+		cola.destruir();
 		SignalHandler::getInstance()->destruir();
 		log.info(tag, "Ejecucion finalizada.");
 		return 0;
