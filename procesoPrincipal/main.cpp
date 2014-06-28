@@ -78,6 +78,7 @@ int main(int argc, char* argv[]) {
 	Cola<st_auto> colaGeneradorJde(archivoEmpleado,'c');
 	Cola<st_peticion> colaPeticiones(archivoEmpleado,'d');
 	Cola<st_peticion> colaRespuestas(archivoEmpleado,'e');
+	Cola<st_surtidor> colaSurtidores(archivoEmpleado,'f');
 
 	try{
 		log.info(TAG, "Comienzo de ejecucion");
@@ -99,6 +100,13 @@ int main(int argc, char* argv[]) {
 		// Controla acceso de empleados a surtidores
 		Semaforo semaforoSurtidor(archivoSemaforo,'s');
 		semaforoSurtidor.inicializar(CantSurtidores);
+
+		for (int i = 0; i < CantSurtidores; i++){
+			st_surtidor  surtidor;
+			surtidor.id = i +1;
+			surtidor.mtype = 1;
+			colaSurtidores.escribir(surtidor);
+		}
 
 		// Controla acceso de empleados al fifo con el JDE
 		Semaforo semaforoJdeEmpleados(archivoSemaforoJdeEmp,'s');
@@ -139,6 +147,7 @@ int main(int argc, char* argv[]) {
 		colaGeneradorJde.destruir();
 		colaPeticiones.destruir();
 		colaRespuestas.destruir();
+		colaSurtidores.destruir();
 
 	}catch(char const* e){
 		log.error(TAG, e);

@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 		std::string archivoEmpleado = properties.getProperty("process.empleado");
 		int tiempo = StringUtils::stringToInt(espera);
 
-		log.info(tag, "Arranca el generador");
+		log.info(tag, "Arranca el generador, demora entre autos: " + espera);
 		AutoFactory factory;
 		FifoEscritura canal(archivoFifo);
 		Cola<st_auto> cola(archivoEmpleado,'c');

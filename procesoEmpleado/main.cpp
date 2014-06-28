@@ -44,6 +44,7 @@ int main(int argc, char* argv[]){
 	std::string archivoFifoJdeEmp = properties.getProperty("fifo.jde.empleado");
 	std::string archivoSemaforoJdeEmp = properties.getProperty("semaforo.jde.empleado");
 	std::string archivoSemaforoSurtidores = properties.getProperty("semaforo.surtidores");
+	std::string archivoEmpleado = properties.getProperty("process.empleado");
 	std::string base = properties.getProperty("constante.tiempo.empleado");
 	int tiempoBase = StringUtils::stringToInt(base);
 
@@ -55,6 +56,7 @@ int main(int argc, char* argv[]){
 	memset(buffer, '\0', TAM_BUFFER);
 	canalJdeEmp.abrir();
 	Empleados empleados;
+	Cola<st_surtidor> colaSurtidores(archivoEmpleado,'f');
 
 	log.info(tag, "Comienzo del proceso empleado");
 	while( sigint_handler.getGracefulQuit() == 0){
@@ -73,13 +75,16 @@ int main(int argc, char* argv[]){
 				int tiempoTrabajo = tiempoDeTrabajo(automovil, tiempoBase);
 
 				// Espero al surtidor
-				int resultado = semaforoSurtidor.p();
-				if(resultado != -1){
-					log.debug(tag, "Empleado trabajando " + StringUtils::intToString(tiempoTrabajo));
+				int resultado = 0;
+				st_surtidor surtidor;
+				resultado = colaSurtidores.leer(1, &surtidor);
+				if(resultado > 0){
+					log.debug(tag, "Empleado trabajando " + StringUtils::intToString(tiempoTrabajo) + " - Surtidor: " + StringUtils::intToString(surtidor.id));
 					int tiempoRestante = 0;
 					tiempoRestante = sleep(tiempoTrabajo);
 					sleep(tiempoRestante);
-					semaforoSurtidor.v();
+					log.debug(tag, "Devolviendo Surtidor: " + StringUtils::intToString(surtidor.id));
+					colaSurtidores.escribir(surtidor);
 					// Deposito en la caja
 					int dineroAuto = automovil.getDinero();
 					//int montoTotal = depositarEnCaja(dineroAuto);
@@ -95,7 +100,7 @@ int main(int argc, char* argv[]){
 				}
 			} else {
 				if (errno == EINTR)
-					log.debug(tag, "Recibi señal mientras esperaba el fifo.");
+					log.debug(tag, "Recibi señal mientras esperaba en el semaforo para acceder al FIFO.");
 				else
 					log.error(tag, "Error esperando auto. ERRNO:" + StringUtils::intToString(errno));
 			}

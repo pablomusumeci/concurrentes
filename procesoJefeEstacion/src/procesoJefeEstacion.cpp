@@ -55,7 +55,7 @@ int main() {
 				if (empleados.hayEmpleadoLibre()) {
 
 					std::string mensajeEnviar = automovil.serializar();
-					log.debug(TAG, "Enviando auto: " + mensajeEnviar);
+					//log.debug(TAG, "Enviando auto: " + mensajeEnviar);
 					canalJdeEmp.escribir(
 							static_cast<const void*>(mensajeEnviar.c_str()),
 							mensajeEnviar.length());

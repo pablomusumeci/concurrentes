@@ -14,6 +14,11 @@ typedef struct st_peticion {
 	int dinero;
 } st_peticion;
 
+typedef struct st_surtidor{
+	long mtype;
+	int id;
+} st_surtidor;
+
 template <class T> class Cola {
 	private:
 		key_t	clave;
