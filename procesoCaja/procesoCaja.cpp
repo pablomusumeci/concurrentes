@@ -14,7 +14,7 @@
 #include <unistd.h>
 #include <StringUtils.h>
 #include <errno.h>
-int main(char *args[], int argc){
+int main( int argc, char *args[]){
 
 	Logger log;
 	std::string TAG = "Proceso Caja";
