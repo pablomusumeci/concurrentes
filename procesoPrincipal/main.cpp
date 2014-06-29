@@ -130,6 +130,7 @@ int main(int argc, char* argv[]) {
 			(*it)->interrupt();
 			delete *it;
 		}
+		colaPeticiones.destruir();
 		Generador->interrupt();
 		delete Generador;
 		JefeEstacion->interrupt();
@@ -144,8 +145,6 @@ int main(int argc, char* argv[]) {
 		destruirListaDeEmpleados(arrayEmpleados);
 		semaforoSurtidor.eliminar();
 		semaforoJdeEmpleados.eliminar();
-		colaGeneradorJde.destruir();
-		colaPeticiones.destruir();
 		colaRespuestas.destruir();
 		colaSurtidores.destruir();
 

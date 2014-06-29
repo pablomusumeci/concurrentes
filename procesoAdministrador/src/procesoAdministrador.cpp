@@ -22,16 +22,17 @@ int main() {
 	SIGINT_Handler sigint_handler;
 	SignalHandler::getInstance()->registrarHandler(SIGINT, &sigint_handler);
 	Caja caja;
-	while (sigint_handler.getGracefulQuit() == 0) {
+	int valor = 0;
+	while (sigint_handler.getGracefulQuit() == 0 and valor >= 0) {
 		sleep(tiempo);
-		int valor = caja.consultar(1 ,TAG);
+		valor = caja.consultar(1 ,TAG);
 		if (valor >= 0) {
 			log.info(TAG, "Caja $" + StringUtils::intToString(valor));
 		} else {
 			if (errno == EINTR){
 				log.debug(TAG, "Recibi señal durante la consulta");
 			} else {
-				log.error(TAG, "Error en la consulta");
+				log.error(TAG, "La cola de respuesta fue removida");
 			}
 		}
 	}

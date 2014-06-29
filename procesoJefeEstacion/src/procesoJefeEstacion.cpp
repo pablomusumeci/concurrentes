@@ -3,6 +3,7 @@ using namespace std;
 
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 #include <wait.h>
 #include <MemoriaCompartida.h>
 #include <Logger/Logger.h>
@@ -45,17 +46,16 @@ int main() {
 
 		// Grupo de empleados
 		Empleados empleados;
+		st_auto autoRecibido;
+		int resultado = 0;
+		while (sigint_handler.getGracefulQuit() == 0 and resultado >=0) {
+			resultado = cola.leer(-3, &autoRecibido);
 
-		while (sigint_handler.getGracefulQuit() == 0) {
-			st_auto autoRecibido;
-			int resultado = cola.leer(-3, &autoRecibido);
-			Auto automovil(autoRecibido);
-			log.info(TAG, "Recibi: " + automovil.serializar());
 			if(resultado > 0){
+				Auto automovil(autoRecibido);
+				log.info(TAG, "Recibi: " + automovil.serializar());
 				if (empleados.hayEmpleadoLibre()) {
-
 					std::string mensajeEnviar = automovil.serializar();
-					//log.debug(TAG, "Enviando auto: " + mensajeEnviar);
 					canalJdeEmp.escribir(
 							static_cast<const void*>(mensajeEnviar.c_str()),
 							mensajeEnviar.length()+1);
@@ -64,6 +64,12 @@ int main() {
 					log.debug(TAG, "Se rechaza el auto con id "
 							+ StringUtils::intToString(automovil.getID())
 									+ " por falta de empleados libres");
+				}
+			} else {
+				if (errno == EINTR){
+					log.debug(TAG, "Recibi señal mientras leia cola de autos.");
+				} else{
+					log.debug(TAG, "La cola de autos fue removida");
 				}
 			}
 		 }

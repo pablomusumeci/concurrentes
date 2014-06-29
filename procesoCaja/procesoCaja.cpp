@@ -34,9 +34,9 @@ int main(char *args[], int argc){
 	Cola<st_peticion> colaRespuestas(archivoEmpleado,'e');
 	int caja = 0;
 	st_peticion peticion;
-	while (sigint_handler.getGracefulQuit() == 0) {
-
-		int resultado = colaPeticiones.leer(-3, &peticion);
+	int resultado = 0;
+	while (sigint_handler.getGracefulQuit() == 0 and resultado != -1) {
+		resultado = colaPeticiones.leer(-3, &peticion);
 		if (resultado != -1){
 			log.debug(TAG, "Peticion ID: " + StringUtils::intToString(peticion.id) + " $ " + StringUtils::intToString(peticion.dinero));
 			caja += peticion.dinero;
@@ -47,7 +47,7 @@ int main(char *args[], int argc){
 			if (errno == EINTR){
 				log.debug(TAG, "Recibi señal mientras leia de colaPeticiones.");
 			} else {
-				log.error(TAG, "Error leyendo de colaPeticiones. ERRNO:" + StringUtils::intToString(errno));
+				log.debug(TAG, "La cola de peticiones fue removida");
 			}
 		}
 	}
