@@ -39,7 +39,7 @@ int main() {
 	Cola<st_auto> cola(archivoEmpleado,'c');
 	char buffer[ TAM_BUFFER];
 	try {
-		memset(buffer, '\0', TAM_BUFFER);
+		memset(buffer, '\0', TAM_BUFFER*sizeof(char));
 		canalGenJde.abrir();
 		canalJdeEmp.abrir();
 
@@ -58,7 +58,7 @@ int main() {
 					//log.debug(TAG, "Enviando auto: " + mensajeEnviar);
 					canalJdeEmp.escribir(
 							static_cast<const void*>(mensajeEnviar.c_str()),
-							mensajeEnviar.length());
+							mensajeEnviar.length()+1);
 				} else {
 					// Rechazar el auto
 					log.debug(TAG, "Se rechaza el auto con id "
