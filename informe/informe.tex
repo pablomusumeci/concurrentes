@@ -330,12 +330,12 @@ typedef struct st_peticion {
     \hline
     \textbf{Caso de uso:} & Generar auto \\
     \hline
-    \textbf{Descripcion:} &  Crea el automovil que se dirige a la estacion\\
+    \textbf{Descripción:} &  Crea el automóvil que se dirige a la estación\\
     \hline
     \textbf{Actores participantes:} & Generador de autos  \\
     \hline
  
-    \textbf{Pre-condiciones:} &  El proceso principal inicializo los recursos utilizados\\
+    \textbf{Pre-condiciones:} &  El proceso principal inicializó los recursos utilizados\\
     \hline
     \hline
     \textbf{Flujos:} &\\
@@ -343,20 +343,20 @@ typedef struct st_peticion {
 	\textbf{Flujo Principal:} &\\ 
 
 	\hline
-	1 & El generador utiliza un numero aleatorio para determinar si el auto creado sera VIP o regular\\
+	1 & El generador utiliza un número aleatorio para determinar si el auto creado sera VIP o regular\\
     \hline
-	2 & El generador asigna un ID autoincremental al automovil creado\\
+	2 & El generador asigna un ID autoincremental al automóvil creado\\
     \hline
-	3 & El generador crea un struct con los datos del automovil creado\\
+	3 & El generador crea un struct con los datos del automóvil creado\\
     \hline
 	4 & El generador escribe en la cola el struct mencionado anteriomente\\
     \hline
-	5 & El generador duerme un tiempo constante (configurable) antes de enviar otro automovil\\
+	5 & El generador duerme un tiempo constante (configurable) antes de enviar otro automóvil\\
     \hline
     \hline
-	\textbf{Flujos de excepción:} & Se recibio una señal que cambia la condicion del while que ejecuta el proceso. En la proxima iteracion se saldra del ciclo y terminara el proceso.\\
+	\textbf{Flujos de excepción:} & Se recibió una señal que cambia la condición del while que ejecuta el proceso. En la próxima iteración se saldrá del ciclo y terminará el proceso.\\
     \hline
-	\textbf{Post-condiciones:} & Se encolo un automovil en la cola que comparten el generador y el jefe de estacion\\
+	\textbf{Post-condiciones:} & Se encolo un automóvil en la cola que comparten el generador y el jefe de estación\\
 	\hline
 	\end{tabular}
 
@@ -366,12 +366,12 @@ typedef struct st_peticion {
     \hline
     \textbf{Caso de uso:} & Distribuir automoviles \\
     \hline
-    \textbf{Descripcion:} &  Despacha automoviles hacia los empleados o la salida\\
+    \textbf{Descripción:} &  Despacha automoviles hacia los empleados o la salida\\
     \hline
-    \textbf{Actores participantes:} & Jefe de estacion  \\
+    \textbf{Actores participantes:} & Jefe de estación  \\
     \hline
  
-    \textbf{Pre-condiciones:} &  El proceso principal inicializo los recursos utilizados. Existe 
+    \textbf{Pre-condiciones:} &  El proceso principal inicializó los recursos utilizados. Existe 
     al menos un auto encolado por el generador.\\
     \hline
     \hline
@@ -384,11 +384,11 @@ typedef struct st_peticion {
 	\hline
 	2 & Consulta la variable en memoria compartida que tiene la cantidad de empleados disponibles\\
 	\hline
-	3 & El generador crea un struct con los datos del automovil creado\\
+	3 & El generador crea un struct con los datos del automóvil creado\\
 	\hline
 	4 & Existe un empleado disponible
 		\begin{itemize}
-			\item Enviar automovil por el FIFO entre JDE y empleados 
+			\item Enviar automóvil por el FIFO entre JDE y empleados 
 		\end{itemize}
 		\\
 	\hline
@@ -399,11 +399,11 @@ typedef struct st_peticion {
 		\\
 	\hline
 	\hline
-	\textbf{Flujos de excepción:} & Se recibio una señal que cambia la condicion del while que ejecuta el proceso. En la proxima iteracion se saldra del ciclo y terminara el proceso.\\
+	\textbf{Flujos de excepción:} & Se recibió una señal que cambia la condición del while que ejecuta el proceso. En la próxima iteración se saldrá del ciclo y terminará el proceso.\\
     \hline
 
     \hline
-	\textbf{Post-condiciones:} & Se desencolo un automovil de la cola compartida entre el generador y el JDE.\\
+	\textbf{Post-condiciones:} & Se desencolo un automóvil de la cola compartida entre el generador y el JDE.\\
 	\hline
 	\end{tabular}
 
@@ -413,12 +413,12 @@ typedef struct st_peticion {
     \hline
     \textbf{Caso de uso:} & Empleado trabajando \\
     \hline
-    \textbf{Descripcion:} &  Ciclo de trabajo del empleado\\
+    \textbf{Descripción:} &  Ciclo de trabajo del empleado\\
     \hline
     \textbf{Actores participantes:} & Empleado\\
     \hline
  
-    \textbf{Pre-condiciones:} &  El proceso principal inicializo los recursos utilizados. El empleado tiene un auto leido del FIFO compartido con el JDE\\
+    \textbf{Pre-condiciones:} &  El proceso principal inicializó los recursos utilizados. El empleado tiene un auto leído del FIFO compartido con el JDE\\
     \hline
     \hline
     \textbf{Flujos:} &\\
@@ -443,11 +443,11 @@ typedef struct st_peticion {
 	7 & Aumenta la cantidad de empleados disponibles\\
 	\hline
 	\hline
-	\textbf{Flujos de excepción:} & Se recibio una señal que cambia la condicion del while que ejecuta el proceso. En la proxima iteracion se saldra del ciclo y terminara el proceso.\\
+	\textbf{Flujos de excepción:} & Se recibió una señal que cambia la condición del while que ejecuta el proceso. En la próxima iteración se saldrá del ciclo y terminará el proceso.\\
     \hline
 
     \hline
-	\textbf{Post-condiciones:} & Se leyo un automovil del FIFO\\
+	\textbf{Post-condiciones:} & Se leyo un automóvil del FIFO\\
 	\hline
 	\end{tabular}
 
@@ -457,12 +457,12 @@ typedef struct st_peticion {
     \hline
     \textbf{Caso de uso:} & Consultar saldo de la caja \\
     \hline
-    \textbf{Descripcion:} &  El administrador consulta el saldo depositado hasta el momento\\
+    \textbf{Descripción:} &  El administrador consulta el saldo depositado hasta el momento\\
     \hline
     \textbf{Actores participantes:} & Administrador\\
     \hline
  
-    \textbf{Pre-condiciones:} &  El proceso principal inicializo los recursos utilizados\\
+    \textbf{Pre-condiciones:} &  El proceso principal inicializó los recursos utilizados\\
     \hline
     \hline
     \textbf{Flujos:} &\\
@@ -478,7 +478,7 @@ typedef struct st_peticion {
 	\hline
 	4 & Duerme un tiempo constante (configurable)\\
 	\hline
-	\textbf{Flujos de excepción:} & Se recibio una señal que cambia la condicion del while que ejecuta el proceso. En la proxima iteracion se saldra del ciclo y terminara el proceso.\\
+	\textbf{Flujos de excepción:} & Se recibió una señal que cambia la condición del while que ejecuta el proceso. En la próxima iteración se saldrá del ciclo y terminará el proceso.\\
     \hline
 
     \hline
@@ -492,12 +492,12 @@ typedef struct st_peticion {
     \hline
     \textbf{Caso de uso:} & Controlar acceso a la caja \\
     \hline
-    \textbf{Descripcion:} &  El proceso caja administra las solicitudes que recibe para depositar dinero\\
+    \textbf{Descripción:} &  El proceso caja administra las solicitudes que recibe para depositar dinero\\
     \hline
     \textbf{Actores participantes:} & Proceso caja\\
     \hline
  
-    \textbf{Pre-condiciones:} &  El proceso principal inicializo los recursos utilizados\\
+    \textbf{Pre-condiciones:} &  El proceso principal inicializó los recursos utilizados\\
     \hline
     \hline
     \textbf{Flujos:} &\\
@@ -505,22 +505,22 @@ typedef struct st_peticion {
 	\textbf{Flujo Principal:} &\\ 
 
 	\hline
-	1 & Espera peticion para depositar en la caja\\
+	1 & Espera petición para depositar en la caja\\
 	\hline
-	2 & Desencola la peticion entrante\\
+	2 & Desencola la petición entrante\\
 	\hline
 	3 & Suma en la variable local al proceso el monto recibido\\
 	\hline
 	4 & Genera una peticion de respuesta con el valor actual de la caja\\
 	\hline
-	5 & Envia la peticion dirigida al proceso que hizo el deposito\\
+	5 & Envia la petición dirigida al proceso que hizo el depósito\\
 	\hline
 	\hline
-	\textbf{Flujos de excepción:} & Se recibio una señal que cambia la condicion del while que ejecuta el proceso. En la proxima iteracion se saldra del ciclo y terminara el proceso.\\
+	\textbf{Flujos de excepción:} & Se recibió una señal que cambia la condición del while que ejecuta el proceso. En la próxima iteración se saldrá del ciclo y terminará el proceso.\\
     \hline
 
     \hline
-	\textbf{Post-condiciones:} & Se deposito en la caja el monto recibido, y se devolvio el saldo actual\\
+	\textbf{Post-condiciones:} & Se depositó en la caja el monto recibido, y se devolvió el saldo actual\\
 	\hline
 	\end{tabular}
 

@@ -99,7 +99,6 @@ int main(int argc, char* argv[]) {
 
 		// Controla acceso de empleados a surtidores
 		Semaforo semaforoSurtidor(archivoSemaforo,'s');
-		semaforoSurtidor.inicializar(CantSurtidores);
 
 		for (int i = 0; i < CantSurtidores; i++){
 			st_surtidor  surtidor;
@@ -140,10 +139,8 @@ int main(int argc, char* argv[]) {
 		Caja->interrupt();
 		delete Caja;
 
-		log.debug(TAG, "Cuenta del semaforo semaforoSurtidor " + StringUtils::intToString(semaforoSurtidor.getProcesosEsperando()));
 		log.debug(TAG, "Cuenta del semaforo semaforoJdeEmpleados " + StringUtils::intToString(semaforoJdeEmpleados.getProcesosEsperando()));
 		destruirListaDeEmpleados(arrayEmpleados);
-		semaforoSurtidor.eliminar();
 		semaforoJdeEmpleados.eliminar();
 		colaRespuestas.destruir();
 		colaSurtidores.destruir();

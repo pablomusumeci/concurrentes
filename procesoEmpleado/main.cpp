@@ -43,23 +43,21 @@ int main(int argc, char* argv[]){
 	std::string tag = "Empleado " + StringUtils::intToString(getpid());
 	std::string archivoFifoJdeEmp = properties.getProperty("fifo.jde.empleado");
 	std::string archivoSemaforoJdeEmp = properties.getProperty("semaforo.jde.empleado");
-	std::string archivoSemaforoSurtidores = properties.getProperty("semaforo.surtidores");
 	std::string archivoEmpleado = properties.getProperty("process.empleado");
 	std::string base = properties.getProperty("constante.tiempo.empleado");
 	int tiempoBase = StringUtils::stringToInt(base);
 
 	FifoLectura canalJdeEmp(archivoFifoJdeEmp);
 	Semaforo semaforoFifoJdeEmp(archivoSemaforoJdeEmp, 's');
-	Semaforo semaforoSurtidor(archivoSemaforoSurtidores, 's');
 	Caja caja;
 	char buffer [ TAM_BUFFER ];
 	memset(buffer, '\0', TAM_BUFFER * sizeof(char));
 	canalJdeEmp.abrir();
 	Empleados empleados;
 	Cola<st_surtidor> colaSurtidores(archivoEmpleado,'f');
-
+	int saldoNuevo = 0;
 	log.info(tag, "Comienzo del proceso empleado");
-	while( sigint_handler.getGracefulQuit() == 0){
+	while( sigint_handler.getGracefulQuit() == 0 and saldoNuevo >= 0){
 		int resultadoJde = semaforoFifoJdeEmp.p();
 		if(resultadoJde != -1){
 			ssize_t bytesLeidos = canalJdeEmp.leer ( static_cast <void*>( buffer ) , TAM_BUFFER);
@@ -87,9 +85,14 @@ int main(int argc, char* argv[]){
 					colaSurtidores.escribir(surtidor);
 					// Deposito en la caja
 					int dineroAuto = automovil.getDinero();
-					//int montoTotal = depositarEnCaja(dineroAuto);
-					int saldoNuevo = caja.depositar(dineroAuto, 2 ,tag);
-					log.debug(tag, "Deposito $" +  StringUtils::intToString(dineroAuto) + " - Saldo Nuevo $" + StringUtils::intToString(saldoNuevo));
+					// Recibo el saldo nuevo
+					saldoNuevo = caja.depositar(dineroAuto, 2 ,tag);
+
+					if (saldoNuevo == -1){
+						log.debug(tag, "No se pudo acceder a la caja debido a que esta fue removida");
+					} else {
+						log.debug(tag, "Deposito $" +  StringUtils::intToString(dineroAuto) + " - Saldo Nuevo $" + StringUtils::intToString(saldoNuevo));
+					}
 					// El empleado se vuelve a marcar como libre
 					empleados.devolverEmpleado();
 				} else {
