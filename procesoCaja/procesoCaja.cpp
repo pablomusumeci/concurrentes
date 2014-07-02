@@ -36,6 +36,7 @@ int main( int argc, char *args[]){
 	st_peticion peticion;
 	int resultado = 0;
 	while (sigint_handler.getGracefulQuit() == 0 and resultado != -1) {
+		sleep(5);
 		resultado = colaPeticiones.leer(-3, &peticion);
 		if (resultado != -1){
 			log.debug(TAG, "Peticion ID: " + StringUtils::intToString(peticion.id) + " $ " + StringUtils::intToString(peticion.dinero));
