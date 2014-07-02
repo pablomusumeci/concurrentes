@@ -18,7 +18,7 @@ AutoFactory::~AutoFactory() {
 // probabilidad 20% de que sea VIP
 Auto* AutoFactory::generar(){
 	long mtype = NORMAL; // prioridad comun
-	if (rand() % 5 < 2) mtype = VIP; // prioridad vip
+	if (rand() % 8 < 2) mtype = VIP; // prioridad vip
 	Auto* automovil = new Auto(this->id, this->generarRandom(), mtype);
 	id++;
 	return automovil;
