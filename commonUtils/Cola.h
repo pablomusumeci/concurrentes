@@ -10,13 +10,13 @@
 
 typedef struct st_peticion {
 	long mtype;
-	pid_t id;
 	int dinero;
+	pid_t id;
 } st_peticion;
 
 typedef struct st_surtidor{
 	long mtype;
-	int id;
+	long id;
 } st_surtidor;
 
 template <class T> class Cola {
