@@ -98,7 +98,7 @@ int main(int argc, char* argv[]) {
 		inicializarListaDeEmpleados(CantEmpleados, arrayEmpleados);
 
 		// Controla acceso de empleados a surtidores
-		Semaforo semaforoSurtidor(archivoSemaforo,'s');
+//		Semaforo semaforoSurtidor(archivoSemaforo,'s');
 
 		for (int i = 0; i < CantSurtidores; i++){
 			st_surtidor  surtidor;
